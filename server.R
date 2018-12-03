@@ -43,7 +43,7 @@ server <- function(input, output) {
   home_team_data <- reactive({
     temp <- home_and_away_teams()
     homeTeam <- temp[2]
-    data <- filter(game_data, team_home == homeTeam | team_away == homeTeam)
+    data <- filter(game_data, score_home != "NA", team_home == homeTeam | team_away == homeTeam)
     data <- head(data, 9)
     data
   })
@@ -52,7 +52,7 @@ server <- function(input, output) {
   home_team_data_at_home <- reactive({
     temp <- home_and_away_teams()
     homeTeam <- temp[2]
-    homeData <- filter(game_data, team_home == homeTeam)
+    homeData <- filter(game_data, score_home != "NA", team_home == homeTeam)
     homeData <- head(homeData, 9)
     homeData
   })
@@ -61,7 +61,7 @@ server <- function(input, output) {
   away_team_data <- reactive({
     temp <- home_and_away_teams()
     awayTeam <- temp[1]
-    data <- filter(game_data, team_home == awayTeam | team_away == awayTeam)
+    data <- filter(game_data, score_home != "NA", team_home == awayTeam | team_away == awayTeam)
     data <- head(data, 9)
     data
   })
@@ -70,7 +70,7 @@ server <- function(input, output) {
   away_team_data_at_away <- reactive({
     temp <- home_and_away_teams()
     awayTeam <- tempA[1]
-    awayData <- filter(game_data, team_away == awayTeam)
+    awayData <- filter(game_data, score_home != "NA", team_away == awayTeam)
     awayData <- head(awayData, 9)
     awayData
   })
