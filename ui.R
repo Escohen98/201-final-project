@@ -12,28 +12,11 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("schedule", label = h3("Week Select"),
-                  choices = list("1" = "1",
-                                 "2" = "2",
-                                 "3" = "3",
-                                 "4" = "4",
-                                 "5" = "5",
-                                 "6" = "6",
-                                 "7" = "7",
-                                 "8" = "8",
-                                 "9" = "9",
-                                 "10" = "10",
-                                 "11" = "11",
-                                 "12" = "12",
-                                 "13" = "13",
-                                 "14" = "14",
-                                 "15" = "15",
-                                 "16" = "16",
-                                 "17" = "17"),
-                                 selected = "1"),
+                  choices = c(1:17), selected = 1),
       
       selectInput("game", label = h3("Game Select"),
                   choices = NFL_data %>%
-                    filter(schedule_week == textOutput("schedule")) %>%
+                    filter(schedule_week == textOutput(selected_week)) %>%
                     select(game_title))
     ),
   

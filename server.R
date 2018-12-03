@@ -4,7 +4,7 @@ library(ggplot2)
 
 server <- function(input, output) {
   
-  output$schedule <- renderPrint ({ input$schedule })
+  output$selected_week <- renderText ({ input$schedule })
   
   ## Gets current date
   current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
