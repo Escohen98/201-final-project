@@ -5,6 +5,8 @@ server <- function(input, output) {
   game_data <- read.csv("data/spreadspoke_scores.csv") %>% 
     filter(schedule_season == current_date | schedule_season == current_date - 1 |
              schedule_season == current_date - 2)
+  game_data$schedule_week <- as.numeric(game_data$schedule_week)
+  game_data <- arrange(game_data, desc(schedule_season), desc(schedule_week))
   
   
   home_and_away_teams <- reactive({
