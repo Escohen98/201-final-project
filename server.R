@@ -77,8 +77,7 @@ server <- function(input, output) {
     awayData
   })
   
-  ## Returns a chart displaying the home win rate of the home team and the away win rate of the away team
-  output$home_and_away_chart <- renderPlot({
+  home_away_win_rate_chart <- reactive({
     homeData <- home_team_data_at_home()
     awayData <- away_team_data_at_away()
     team_names <- home_and_away_teams()
@@ -97,11 +96,24 @@ server <- function(input, output) {
     homeWinRate <- homeWins / 9
     awayWinRate <- awayWins / 9
     
+    winRateChart <- data_frame("Team_Name" = team_names,
+                               "Win_Rate" = c(awayWinRate, homeWinRate))
+    
+    winRateChart
+  })
+  
+  who_wins_the_game_calculator <- reactive({
+    home_away_win_rate_chart <- home_away_win_rate_chart()
+  })
+  
+  ## Returns a chart displaying the home win rate of the home team and the away win rate of the away team
+  output$home_and_away_chart <- renderPlot({
+    team_names <- home_and_away_teams()
+    winRateChart <- home_away_win_rate_chart()
+    
     ## Formats strings for the title
     team_names_detailed <- c(paste(team_names[1], "in away games"),
                              paste(team_names[2], "in home games"))
-    winRateChart <- data_frame("Team_Name" = team_names,
-                               "Win_Rate" = c(awayWinRate, homeWinRate))
     
     ## Chart that is being returned
     ggplot(data = winRateChart, aes(x = Team_Name, y = Win_Rate)) + geom_bar(stat = "identity") +
