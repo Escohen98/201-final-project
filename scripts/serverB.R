@@ -1,10 +1,14 @@
 library(shiny)
 library(dplyr)
 library(ggplot2)
+source("summary.R")
 
 server <- function(input, output) {
   
   current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
+  stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
+  teams <- read.csv("../data/nfl_teams.csv", stringsAsFactors = FALSE)
+  spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
   game_data <- read.csv("../data/spreadspoke_scores.csv") %>% 
     filter(schedule_season == current_date | schedule_season == current_date - 1 |
              schedule_season == current_date - 2)
@@ -30,8 +34,9 @@ server <- function(input, output) {
   
   home_team_data <- reactive({
     tempA <- home_and_away_teams()
-    homeTeam <- tempA(2)
+    homeTeam <- tempA[2]
     homeData <- filter(game_data, team_home == homeTeam)
+    homeData <- head(homeData, 9)
     
   })
 }
