@@ -58,7 +58,7 @@ server <- function(input, output) {
   })
   
   ## Creates a data frame of the last nine GAMES of the away team
-  home_team_data <- reactive({
+  away_team_data <- reactive({
     temp <- home_and_away_teams()
     awayTeam <- temp[1]
     data <- filter(game_data, team_home == awayTeam | team_away == awayTeam)
@@ -77,8 +77,8 @@ server <- function(input, output) {
   
   ## Returns a chart displaying the home win rate of the home team and the away win rate of the away team
   output$home_and_away_chart <- renderPlot({
-    homeData <- home_team_data()
-    awayData <- away_team_data()
+    homeData <- home_team_data_at_home()
+    awayData <- away_team_data_at_away()
     team_names <- home_and_away_teams()
     
     ## Records the number of home and away wins of gthe home and away teams
