@@ -4,8 +4,6 @@ library(ggplot2)
 
 server <- function(input, output) {
   
-  output$selected_week <- renderText ({ input$schedule })
-  
   ## Gets current date
   current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
   
@@ -24,8 +22,8 @@ server <- function(input, output) {
   ## first data point is the away team of the inputted game,
   ## second point is the home team
   home_and_away_teams <- reactive({
-    week <- input$schedule_week
-    gameTitle <- input$game_name
+    week <- input$schedule
+    gameTitle <- input$game
     homeTeam <- ""
     awayTeam <- ""
     temp <- filter(game_data, schedule_week == week & schedule_season == current_date)
@@ -102,7 +100,7 @@ server <- function(input, output) {
                                "Win_Rate" = c(awayWinRate, homeWinRate))
     
     ## Chart that is being returned
-    ggplot(data = winRateChart, aes(x = Team_Name, y = Win_Rate)) + geom_bar() +
+    ggplot(data = winRateChart, aes(x = Team_Name, y = Win_Rate)) + geom_bar(stat = "identity") +
       ggtitle(paste("Win Rates for", team_names_detailed[1],
                     "and", team_names_detailed[2]))
   })
