@@ -1,9 +1,20 @@
 library(shiny)
 library(dplyr)
-NFL_data <- read.csv("data/spreadspoke_scores.csv", stringsAsFactors = FALSE) %>%
-  select(schedule_season, schedule_week, team_home, team_away) %>%
-  filter(schedule_season == substr(date(), 21, 24)) %>%
-  mutate(game_title = paste(team_away, "@ ", team_home))
+
+current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
+
+game_data <- read.csv("data/spreadspoke_scores.csv") %>% 
+  filter(schedule_season == current_date)
+game_data$schedule_week <- as.numeric(game_data$schedule_week)
+game_data <- arrange(game_data, desc(schedule_week))
+
+list_of_games <- c()
+
+for (i in 1:nrow(game_data)) {
+  list_of_games <- c(list_of_games, paste0("Week ", game_data[i, "schedule_week"],
+                                           ": ", game_data[i, "team_away"],
+                                           " @ ", game_data[i, "team_home"]))
+}
 
 shinyUI(fluidPage(
   
@@ -11,13 +22,8 @@ shinyUI(fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      selectInput("schedule", label = h3("Week Select"),
-                  choices = c(1:17), selected = 1),
-      
       selectInput("game", label = h3("Game Select"),
-                  choices = NFL_data %>%
-                    filter(schedule_week == textOutput(selected_week)) %>%
-                    select(game_title))
+                  choices = list_of_games)
     ),
   
   mainPanel(
