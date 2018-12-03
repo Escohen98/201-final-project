@@ -5,6 +5,7 @@ library(dplyr)
 file <- paste0(".", file) 
 file <- "./data/nfl_teams.csv"
 if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
+  paste0(".", file)
 }
 teams <- read.csv(file, stringsAsFactors = FALSE)
 #spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
