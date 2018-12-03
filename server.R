@@ -30,12 +30,12 @@ server <- function(input, output) {
     awayTeam <- ""
     temp <- filter(game_data, schedule_week == week & schedule_season == current_date)
     for (i in 1:nrow(temp)) {
-      if(grepl(temp[i, "team_home"], gameTitle))
+      if(grepl(temp[i, "team_home"], gameTitle)) {
         homeTeam <- temp[i, "team_home"]
-      if(grepl(temp[i, "team_away"], gameTitle))
         awayTeam <- temp[i, "team_away"]
+      }
     }
-    home_and_away <- c(awayTeam, homeTeam)
+    home_and_away <- c(paste(awayTeam), paste(homeTeam))
     home_and_away
   })
   
