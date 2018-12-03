@@ -2,11 +2,11 @@ library(dplyr)
 
 #stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
 ##Enables scripts to run in either main dir or scripts folder.
-file <- "./data/nfl_teams.csv"
+file_path <- "./data/nfl_teams.csv"
 if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
-  file <- paste0(".", file)
+  file_path <- paste0('.', file_path)
 }
-teams <- read.csv(file, stringsAsFactors = FALSE)
+teams <- read.csv(file_path, stringsAsFactors = FALSE)
 #spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
 #Train a linear regression prediction model on weather. 
