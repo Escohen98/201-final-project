@@ -38,7 +38,7 @@ shinyUI(fluidPage(
     )
   ),
   mainPanel(
-    plotOutput("PLOT CALL"), ## Requires plot input
+    plotOutput("home_and_away_chart"), ## Requires plot input
     plotOutput("PLOT CALL") ## Requires plot input
   )
   )
