@@ -8,8 +8,16 @@ weather_effect_model <- function(team) {
  
 }
 
+#Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
-  team_data <- select(data, schedule_season, )
+  team_data <- ""
+  if(nchar(team) == 3) {
+    team_data <- filter(data, (home_id == team) || (away_id == team))
+  } else {
+    team_data <- filter(data, (team_home == team) || (team_away == team))
+  }
+  
+  team_data
 }
 
 #Given the team id and data of a single game,
