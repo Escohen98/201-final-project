@@ -33,5 +33,6 @@ shorten_name <- function(full_name) {
   tail(strsplit(full_name, " ")[[1]], 1)
 }
 
-something <- mutate(spreadspoke, home_id = name_to_id(shorten_name(team_home)), away_id = name_to_id(shorten_name(team_away)))
-write.csv("../data/spreadspoke")
+##Added Columns to CSV. 
+##something <- mutate(spreadspoke, home_id = name_to_id(shorten_name(team_home)), away_id = name_to_id(shorten_name(team_away)))
+##write.csv(something, file = "../data/spreadspoke_scores.csv")
