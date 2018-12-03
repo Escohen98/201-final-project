@@ -2,10 +2,9 @@ library(dplyr)
 
 #stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
 ##Enables scripts to run in either main dir or scripts folder.
-file <- paste0(".", file) 
 file <- "./data/nfl_teams.csv"
 if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
-  paste0(".", file)
+  file <- paste0(".", file)
 }
 teams <- read.csv(file, stringsAsFactors = FALSE)
 #spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
