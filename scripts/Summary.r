@@ -1,4 +1,6 @@
 library(dplyr)
+library(bootstrap)
+library(leaps)
 
 #stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
 ##Enables scripts to run in either main dir or scripts folder.
@@ -7,22 +9,26 @@ if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) {
   file_path <- paste0('../', file_path)
 }
 teams <- read.csv(file_path, stringsAsFactors = FALSE)
-#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
+spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
 #Train a linear regression prediction model on weather. 
 #Coming soon
-#weather_effect_model <- function(team) {
-#}
+weather_effect_model <- function(team, info_data) {
+  attach(info_data)
+  leaps <- regsubsets(score_home ~ weather_temperature + weather_wind_mph + weather_humidity)
+  fit <- lm(score_home ~ weather_temperature + weather_wind_mph + weather_humidity, data=get_team_data(team,info_data))
+  summary(fit)
+}
+
+weather_effect_model("DEN", spreadspoke)
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
   team_data <- ""
-  if(nchar(team) == 3) {
-    team_data <- filter(data, (home_id == team) || (away_id == team))
-  } else {
-    team_data <- filter(data, (team_home == team) || (team_away == team))
+  if(nchar(team) != 3) {
+    name_to_id(team)
   }
-  
+  team_data <- filter(data, (home_id == team) | (away_id == team))
   team_data
 }
 
@@ -55,6 +61,32 @@ append_winner <- function(data) {
   new_data <- mutate(data, winner_id=winner)
 }
 
+#Appends home_id and away_id to table.
+append_ids <- function(data) {
+  home_ids <- c()
+  away_ids <- c()
+  for(row in 1:nrow(data)) {
+    if(is.na(data[row,]$team_home)) {
+      home_ids <- c(home_ids, data[row,]$team_home)
+    } else {
+      home_ids <- c(home_ids, name_to_id(data[row,]$team_home))
+    }
+    
+    if(is.na(data[row,]$team_away)) {
+      away_ids <- c(away_ids, data[row,]$team_away)
+    } else {
+      away_ids <- c(away_ids, name_to_id(data[row,]$team_away))
+    }
+  }
+  something <- mutate(data, home_id = home_ids, away_id = away_ids)
+}
+
+#Adds columns to CSV
+#test_table <- append_ids(spreadspoke)
+#View(test_table)
+#n^2. Only run once. 
+#write.csv(append_winner(append_ids(spreadspoke)), file = "../data/spreadspoke_scores.csv", row.names=FALSE)
+
 #Takes a team ID and returns the given team name (does not include location).
 #Works for team_id or team_id_pfr.
 id_to_name <- function(id) {
@@ -71,11 +103,23 @@ name_to_id <- function(name) {
   team$team_id[1]
 }
 
+team_record <- function(team, week, year, data) {
+  new_data <- get_year_data(year, get_team_data(team, data)) %>%
+    filter(!is.na(schedule_week)) %>%
+    filter((is.numeric(schedule_week) <= week) & (winner_id == team))
+  result <- nrow(new_data)
+  if(week > 16) {
+   result <- "bad." 
+  }
+  result
+}
+ 
+#Helper function to filter only the requested year from the data and return the new table.
+get_year_data <- function(year, data) {
+  year_data <- filter(data, as.numeric(schedule_season) == as.numeric(year))
+}
+
 #Takes in a String and returns the last word in the String.
 shorten_name <- function(full_name) {
   tail(strsplit(full_name, " ")[[1]], 1)
 }
-
-##Added Columns to CSV. 
-#something <- mutate(spreadspoke, home_id = name_to_id(shorten_name(team_home)), away_id = name_to_id(shorten_name(team_away)))
-#write.csv(something, file = "../data/spreadspoke_scores.csv", row.names=FALSE)
