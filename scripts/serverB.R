@@ -5,7 +5,7 @@ library(ggplot2)
 server <- function(input, output) {
   
   current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
-  game_data <- read.csv("data/spreadspoke_scores.csv") %>% 
+  game_data <- read.csv("../data/spreadspoke_scores.csv") %>% 
     filter(schedule_season == current_date | schedule_season == current_date - 1 |
              schedule_season == current_date - 2)
   game_data$schedule_week <- as.numeric(game_data$schedule_week)

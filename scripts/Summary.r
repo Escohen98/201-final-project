@@ -4,12 +4,39 @@ stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
 teams <- read.csv("../data/nfl_teams.csv", stringsAsFactors = FALSE)
 spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
-  #weather_effect <- function(team) {
+weather_effect_model <- function(team) {
  
-#}
+}
 
+#Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
-  team_data <- select(data, schedule_season, )
+  team_data <- ""
+  if(nchar(team) == 3) {
+    team_data <- filter(data, (home_id == team) || (away_id == team))
+  } else {
+    team_data <- filter(data, (team_home == team) || (team_away == team))
+  }
+  
+  team_data
+}
+
+#Given the team id and data of a single game,
+#function determines if the given team won 
+#returns true if the team won, false otherwise. 
+get_team_result <- function(team_id, data) {
+  if(nchar(team) != 3) {
+    
+  }
+  winner <- ""
+  if(data$away_id[1] == team_id) {
+    winner <- data$score_away[1] > data$score_home[1]
+  } else if(data$home_id[1] == team_id) {
+    winner <- data$score_home[1] > data$score_away[1]
+  } else {
+    winner <- NULL
+  }
+  
+  winner
 }
 
 #Takes a team ID and returns the given team name (does not include location).
