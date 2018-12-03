@@ -19,7 +19,8 @@ server <- function(input, output) {
   game_data <- arrange(game_data, desc(schedule_season), desc(schedule_week))
   
   ## Creats a vector where
-  ## first data point is the away team of the inputted game, second point is the home team
+  ## first data point is the away team of the inputted game,
+  ## second point is the home team
   home_and_away_teams <- reactive({
     week <- input$schedule_week
     gameTitle <- input$game_name
@@ -36,7 +37,16 @@ server <- function(input, output) {
     home_and_away
   })
   
-  ## Creates a data frame of the last nine home games of the home team
+  ## Creates a data frame of the last nine GAMES of the home team
+  home_team_data <- reactive({
+    temp <- home_and_away_teams()
+    homeTeam <- temp[2]
+    data <- filter(game_data, team_home == homeTeam | team_away == homeTeam)
+    data <- head(data, 9)
+    data
+  })
+  
+  ## Creates a data frame of the last nine HOME GAMES of the home team
   home_team_data <- reactive({
     temp <- home_and_away_teams()
     homeTeam <- temp[2]
@@ -45,7 +55,16 @@ server <- function(input, output) {
     homeData
   })
   
-  ## Creates a data frame of the last nine away gsmes of the away team
+  ## Creates a data frame of the last nine GAMES of the away team
+  home_team_data <- reactive({
+    temp <- home_and_away_teams()
+    awayTeam <- temp[1]
+    data <- filter(game_data, team_home == awayTeam | team_away == awayTeam)
+    data <- head(data, 9)
+    data
+  })
+  
+  ## Creates a data frame of the last nine AWAY GAMES of the away team
   away_team_data <- reactive({
     temp <- home_and_away_teams()
     awayTeam <- tempA[1]
