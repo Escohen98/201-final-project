@@ -21,5 +21,6 @@ server <- function(input, output) {
       if(grepl(temp[i, "team_away"], gameTitle))
         awayTeam <- temp[i, "team_away"]
     }
+    home_and_away <- c(awayTeam, homeTeam)
   })
 }
