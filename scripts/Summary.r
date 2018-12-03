@@ -1,12 +1,18 @@
 library(dplyr)
 
 #stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
-#teams <- read.csv("../data/nfl_teams.csv", stringsAsFactors = FALSE)
+##Enables scripts to run in either main dir or scripts folder.
+file <- paste0(".", file) 
+file <- "./data/nfl_teams.csv"
+if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
+}
+teams <- read.csv(file, stringsAsFactors = FALSE)
 #spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
-weather_effect_model <- function(team) {
- 
-}
+#Train a linear regression prediction model on weather. 
+#Coming soon
+#weather_effect_model <- function(team) {
+#}
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
@@ -22,41 +28,46 @@ get_team_data <- function(team, data) {
 
 #Given the team id and data of a single game,
 #function determines if the given team won 
-#returns true if the team won, false otherwise. 
-get_team_result <- function(team_id, data) {
-  team <- team_id
-  if(nchar(team) != 3) {
-    team <- name_to_id()
-  }
+#returns the team_id of the winning team. 
+get_team_result <- function(data) {
   winner <- ""
-  if(data$away_id[1] == team_id) {
-    winner <- data$score_away[1] > data$score_home[1]
-  } else if(data$home_id[1] == team_id) {
-    winner <- data$score_home[1] > data$score_away[1]
-  } else {
-    winner <- NULL
-  }
+    if(data$score_away > data$score_home) {
+      winner <- name_to_id(data$team_away)
+    } else {
+      winner <- name_to_id(data$team_home)
+    }
   
   winner
 }
 
+#Appends and returns a dataframe containing the given data and a winner_id column 
+#that has the team_id of the team that won each game. 
+#Sets value to NA if game has yet to be played. 
 append_winner <- function(data) {
-  
+  winner <- c()
+  for(row in 1:nrow(data)) {
+    if(is.na(data[row,]$score_home)) {
+      winner <- c(winner, data[row,]$score_home) 
+    } else {
+      winner <- c(winner, get_team_result(data[row,]))
+    }
+  }
+  new_data <- mutate(data, winner_id=winner)
 }
 
 #Takes a team ID and returns the given team name (does not include location).
 #Works for team_id or team_id_pfr.
-id_to_name <- function(id, data) {
-  team <- select(data, team_name_short, team_id, team_id_pfr) %>%
-    filter((team_id == id) || (team_id_pfr == id))
+id_to_name <- function(id) {
+  team <- select(teams, team_name_short, team_id, team_id_pfr) %>%
+    filter((as.character(team_id) == as.character(id)) || (as.character(team_id_pfr) == as.character(id)))
   team$team_name_short[1]
 }
 
 #Takes a team name and returns the given team id (not the team_id_pfr).
 #Make sure not to include the team's location (team_name) and only the name (team_name_short)
-name_to_id <- function(name, data) {
-  team <- select(data, team_name_short, team_id) %>%
-    filter(team_name_short == name)
+name_to_id <- function(name) {
+  team <- select(teams, team_name_short, team_id) %>%
+    filter(as.character(team_name_short) == as.character(shorten_name(name)))
   team$team_id[1]
 }
 
