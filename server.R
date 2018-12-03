@@ -1,12 +1,15 @@
 library(shiny)
 
 server <- function(input, output) {
+  
+  output$schedule <- renderPrint ({ input$schedule })
+  
   ## Gets current date
   current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
   
   ## Data frames used for functions
-  stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
-  teams <- read.csv("../data/nfl_teams.csv", stringsAsFactors = FALSE)
+  stadiums <- read.csv("data/nfl_stadiums.csv", stringsAsFactors = FALSE)
+  teams <- read.csv("data/nfl_teams.csv", stringsAsFactors = FALSE)
   
   ## Game data frame
   game_data <- read.csv("data/spreadspoke_scores.csv") %>% 
