@@ -22,8 +22,12 @@ server <- function(input, output) {
   ## first data point is the away team of the inputted game,
   ## second point is the home team
   home_and_away_teams <- reactive({
-    week <- input$schedule
     gameTitle <- input$game
+    week <- 0
+    if (substr(gameTitle, 7, 7) == ":")
+      week <- as.numeric(substr(gameTitle, 6, 6))
+    else
+      week <- as.numeric(substr(gameTitle, 6, 7))
     homeTeam <- ""
     awayTeam <- ""
     temp <- filter(game_data, schedule_week == week & schedule_season == current_date)
