@@ -69,7 +69,7 @@ server <- function(input, output) {
   ## Creates a data frame of the last nine AWAY GAMES of the away team
   away_team_data_at_away <- reactive({
     temp <- home_and_away_teams()
-    awayTeam <- tempA[1]
+    awayTeam <- temp[1]
     awayData <- filter(game_data, score_home != "NA", team_away == awayTeam)
     awayData <- head(awayData, 9)
     awayData
