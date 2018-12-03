@@ -66,13 +66,14 @@ server <- function(input, output) {
     homeWinRate <- homeWins / 9
     awayWinRate <- awayWins / 9
     
-    team_names[1] <- paste(team_names[1], "in away games")
-    team_names[2] <- paste(team_names[2], "in home games")
+    team_names_detailed <- c(paste(team_names[1], "in away games"),
+                             paste(team_names[2], "in home games"))
     winRateChart <- data_frame("Team_Name" = team_names,
                                "Win_Rate" = c(awayWinRate, homeWinRate))
 
     
     ggplot(data = winRateChart, aes(x = Team_Name, y = Win_Rate)) + geom_bar() +
-      ggtitle(paste("Win Rate for", ))
+      ggtitle(paste("Win Rates for", team_names_detailed[1],
+                    "and", team_names_detailed[2]))
   })
 }
