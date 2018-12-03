@@ -1,6 +1,6 @@
 library(shiny)
 library(dplyr)
-NFL_data <- read.csv("data/spreadspoke_scores.csv") %>%
+NFL_data <- read.csv("../data/spreadspoke_scores.csv") %>%
   select(schedule_season, schedule_week, team_home, team_away) %>%
   filter(schedule_season == substr(date(), 21, 24)) %>%
   mutate(game_title = paste(team_away, "@ ", team_home))

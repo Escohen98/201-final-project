@@ -24,6 +24,9 @@ get_team_data <- function(team, data) {
 #function determines if the given team won 
 #returns true if the team won, false otherwise. 
 get_team_result <- function(team_id, data) {
+  if(nchar(team) != 3) {
+    
+  }
   winner <- ""
   if(data$away_id[1] == team_id) {
     winner <- data$score_away[1] > data$score_home[1]
