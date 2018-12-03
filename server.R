@@ -20,5 +20,6 @@ server <- function(input, output) {
         awayTeam <- temp[i, "team_away"]
     }
     home_and_away <- c(awayTeam, homeTeam)
+    home_and_away
   })
 }
