@@ -120,4 +120,9 @@ server <- function(input, output) {
            aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
       geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
   })
+  
+  
+  output$site_description <- renderText({
+    paste("")
+  })
 }
