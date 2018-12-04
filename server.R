@@ -3,6 +3,18 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 
+convert_importance <- function(string) {
+  multiplyer <- 0
+  if (string == "Not Very Important") {
+    multiplyer <- 1
+  } else if (string == "Fairly Important") {
+    multiplyer <-  2
+  } else {
+    multiplyer <-  3
+  }
+  return(multiplyer)
+}
+
 server <- function(input, output) {
   
   ################## Initial constants  #################
@@ -214,11 +226,11 @@ server <- function(input, output) {
   })
   
   #################    This calculates who is supposed to win the game   ##############
-  who_wins_the_game_calculator <- reactive({
+  who_wins_calculator <- reactive({
     home_away_win_rate_chart <- home_away_win_rate_chart()
     win_rate_chart <- win_rate_chart()
+    home_and
   })
-  
   
   ################# Outputs begin here   #########################
   
@@ -295,4 +307,5 @@ server <- function(input, output) {
                    team_home == awayTeam | team_away == awayTeam)
     data
   })
+  
 }
