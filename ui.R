@@ -1,5 +1,6 @@
 library(shiny)
 library(dplyr)
+library(plotly)
 
 current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
 
@@ -31,8 +32,8 @@ shinyUI(fluidPage(
   mainPanel(
     tabsetPanel(type = "tabs",
                 tabPanel("Text goes here for now", textOutput("nine_game_mention")),
-                tabPanel("Team Win Rates", plotOutput("home_versus_away_chart")),
-                tabPanel("Rates: Home vs Away", plotOutput("home_and_away_chart")),
+                tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart")),
+                tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart")),
                 tabPanel("Point Differential", plotOutput("point_differential_chart"))
     )
   )
