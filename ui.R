@@ -15,9 +15,7 @@ shinyUI(fluidPage(
                   choices = c(1:17), selected = 1),
       
       selectInput("game", label = h3("Game Select"),
-                  choices = NFL_data %>%
-                    filter(schedule_week == textOutput(selected_week)) %>%
-                    select(game_title))
+                  choices = textOutput("selected_week"))
     ),
   
   mainPanel(
