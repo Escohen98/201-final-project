@@ -170,6 +170,48 @@ server <- function(input, output) {
     winRateChart
   })
   
+  ## Creates a chart that holds the point differentials for the two teams
+  point_differential <- reactive({
+    home_team_data <-  home_team_data()
+    away_team_data <- away_team_data()
+    team_names <- home_and_away_teams()
+    homeTeam <- team_names[2]
+    awayTeam <- team_names[1]
+    home_point_differential <- 0
+    away_point_differential <- 0
+    
+    ## calculates the point differential
+    for (i in 1:9) {
+      if (homeTeam == paste(home_team_data[i, "team_home"])) {
+        home_point_differential <- home_point_differential +
+          home_team_data[i, "score_home"] -
+          home_team_data[i, "score_away"]
+      } else {
+        home_point_differential <- home_point_differential +
+          home_team_data[i, "score_away"] -
+          home_team_data[i, "score_home"]
+      }
+      
+      
+      if (awayTeam == paste(away_team_data[i, "team_home"])) {
+        away_point_differential <- away_point_differential +
+          away_team_data[i, "score_home"] -
+          away_team_data[i, "score_away"]
+      } else {
+        away_point_differential <- away_point_differential +
+          away_team_data[i, "score_away"] -
+          away_team_data[i, "score_home"]
+      }
+    }
+    
+    ## putting differentials in a data table
+    data <- data_frame("Team_Name" = team_names,
+                       "Point_Differential" =
+                         c(away_point_differential, home_point_differential))
+    
+    data
+  })
+  
   #################    This calculates who is supposed to win the game   ##############
   who_wins_the_game_calculator <- reactive({
     home_away_win_rate_chart <- home_away_win_rate_chart()
@@ -202,13 +244,35 @@ server <- function(input, output) {
     home_team <- team_names[2]
     away_team <- team_names[1]
     
-    ## Formats strings for the title
-    team_names_detailed <- c(team_names[1],
-                             paste(team_names[2], "in past 9 games"))
-    
     ## plots win rates for home and way teams
     ggplot(data = win_rate_chart, aes(x = Team_Name, y = Win_Rate, fill = Team_Name)) + geom_bar(stat = "identity") +
-      labs(title = paste("Win Rates for", team_names_detailed[1], "and", team_names_detailed[2], sep=" ")) +
+      labs(title = paste("Win Rates for", team_names[1], "and", team_names[2], sep=" ")) +
       theme(legend.position = "none")
   })
+  
+  ## plots the point differentials of the two teams
+  output$point_differential_chart <- renderPlot({
+    point_differential <- point_differential()
+    
+    ## formatting title
+    chartTitle <- paste("Point differentials (points core - points allowed) for the",
+                        point_differential[1, "Team_Name"], "and the",
+                        point_differential[2, "Team_Name"])
+    
+    ## plotting data
+    ggplot(data = point_differential,
+           aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
+      geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
+  })
+  
+  ## Explaines the data used for each chart
+  output$nine_game_mention <- renderText({
+    paste("** NOTE: All data used is over the nine pertinant games prior to",
+          "the game being predicted (ex: the chart comparing records looks at the",
+          "teams' last nine games, while the chart comparing the home team's",
+          "record at home to the away team's record away looks at the teams' last",
+          "nine home and away games, respectively). This is to ensure that the",
+          "statistics presented are most representative of how the teams are",
+          "currently performing **")
+    })
 }
