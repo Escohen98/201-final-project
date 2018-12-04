@@ -1,6 +1,11 @@
 library(dplyr)
 library(bootstrap)
 library(leaps)
+library(tidyverse)  # data manipulation
+library(cluster)    # clustering algorithms
+library(factoextra) # clustering algorithms & visualization
+library(GGally)
+library(ggplot2)
 
 #stadiums <- read.csv("../data/nfl_stadiums.csv", stringsAsFactors = FALSE)
 ##Enables scripts to run in either main dir or scripts folder.
@@ -9,18 +14,28 @@ if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) {
   file_path <- paste0('../', file_path)
 }
 teams <- read.csv(file_path, stringsAsFactors = FALSE)
-spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
+#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
 #Train a linear regression prediction model on weather. 
 #Coming soon
 weather_effect_model <- function(team, info_data) {
   attach(info_data)
-  leaps <- regsubsets(score_home ~ weather_temperature + weather_wind_mph + weather_humidity)
-  fit <- lm(score_home ~ weather_temperature + weather_wind_mph + weather_humidity, data=get_team_data(team,info_data))
+  leaps <- regsubsets(((score_home-score_away)/abs(score_home-score_away)) ~ weather_temperature + weather_wind_mph + as.numeric(weather_humidity))
+  fit <- lm(leaps, data=get_team_data(team,info_data))
   summary(fit)
 }
 
-weather_effect_model("DEN", spreadspoke)
+ggpairs_model_checker <- function(info_data) {
+  df <- dplyr::mutate(info_data, home_win = ((score_home-score_away)/abs(score_home-score_away)), ave_weather = ((weather_temperature + weather_wind_mph + as.numeric(weather_humidity))/3) | 0)
+  View(df)
+  #df <- fortify(c(((info_data$score_home-info_data$score_away)/abs(info_data$score_home-info_data$score_away)), (info_data$weather_temperature + info_data$weather_wind_mph + as.numeric(info_data$weather_humidity))/3))
+  #df <- as.data.frame(df)
+  ggpairs(data=df, columns=1:2, title="Home Win vs. Weather")
+}
+
+ggpairs_model_checker(spreadspoke)
+
+#weather_effect_model("DEN", spreadspoke)
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
@@ -103,6 +118,7 @@ name_to_id <- function(name) {
   team$team_id[1]
 }
 
+#Returns the number of wins a team has in the given year up until the given week. Returns a numeric result.
 team_record <- function(team, week, year, data) {
   new_data <- get_year_data(year, get_team_data(team, data)) %>%
     filter(!is.na(schedule_week)) %>%
@@ -111,7 +127,7 @@ team_record <- function(team, week, year, data) {
   if(week > 16) {
    result <- "bad." 
   }
-  result
+  as.numeric(result)
 }
  
 #Helper function to filter only the requested year from the data and return the new table.
