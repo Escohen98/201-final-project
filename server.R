@@ -4,14 +4,12 @@ library(ggplot2)
 
 server <- function(input, output) {
   
-<<<<<<< HEAD
   selected_week <- reactive({ input$schedule })
-  output$selected_week <- renderText ({ NFL_data %>%
+  output$selected_week <- renderText({ NFL_data %>%
       filter(schedule_week == selected_week()) %>%
       select(game_title) })
-=======
+
   ################## Initial constants  #################
->>>>>>> 509f7a9a33bf7035207b95f53a6d33e0df448592
   
   ## Gets current date
   current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))

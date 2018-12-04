@@ -23,11 +23,9 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("game", label = h3("Game Select"),
-<<<<<<< HEAD
-                  choices = textOutput("selected_week"))
-=======
+                  #choices = textOutput("selected_week"))
+
                   choices = list_of_games)
->>>>>>> 509f7a9a33bf7035207b95f53a6d33e0df448592
     ),
   
   mainPanel(
