@@ -22,16 +22,23 @@ server <- function(input, output) {
   
   ############### Reactive Variables  ######################
   
+  ## Records the week the game is being played
+  week <- reactive({
+    gameTitle <- input$game
+    week <- 1
+    if (substr(gameTitle, 7, 7) == ":")
+      week <- as.numeric(substr(gameTitle, 6, 6))
+    else
+      week <- as.numeric(substr(gameTitle, 6, 7))
+    week
+  })
+  
   ## Creats a vector where
   ## first data point is the away team of the inputted game,
   ## second point is the home team
   home_and_away_teams <- reactive({
     gameTitle <- input$game
-    week <- 0
-    if (substr(gameTitle, 7, 7) == ":")
-      week <- as.numeric(substr(gameTitle, 6, 6))
-    else
-      week <- as.numeric(substr(gameTitle, 6, 7))
+    week <- week()
     homeTeam <- ""
     awayTeam <- ""
     temp <- filter(game_data, schedule_week == week & schedule_season == current_date)
@@ -48,8 +55,11 @@ server <- function(input, output) {
   ## Creates a data frame of the last nine GAMES of the home team
   home_team_data <- reactive({
     temp <- home_and_away_teams()
+    week <- week()
     homeTeam <- temp[2]
-    data <- filter(game_data, score_home != "NA", team_home == homeTeam | team_away == homeTeam)
+    data <- filter(game_data, score_home != "NA",
+                   schedule_week <= week | schedule_season < current_date,
+                   team_home == homeTeam | team_away == homeTeam)
     data <- head(data, 9)
     data
   })
@@ -57,8 +67,11 @@ server <- function(input, output) {
   ## Creates a data frame of the last nine HOME GAMES of the home team
   home_team_data_at_home <- reactive({
     temp <- home_and_away_teams()
+    week <- week()
     homeTeam <- temp[2]
-    homeData <- filter(game_data, score_home != "NA", team_home == homeTeam)
+    homeData <- filter(game_data, score_home != "NA",
+                       schedule_week <= week | schedule_season < current_date,
+                       team_home == homeTeam)
     homeData <- head(homeData, 9)
     homeData
   })
@@ -66,8 +79,11 @@ server <- function(input, output) {
   ## Creates a data frame of the last nine GAMES of the away team
   away_team_data <- reactive({
     temp <- home_and_away_teams()
+    week <- week()
     awayTeam <- temp[1]
-    data <- filter(game_data, score_home != "NA", team_home == awayTeam | team_away == awayTeam)
+    data <- filter(game_data, score_home != "NA",
+                   schedule_week <= week | schedule_season < current_date,
+                   team_home == awayTeam | team_away == awayTeam)
     data <- head(data, 9)
     data
   })
@@ -75,8 +91,11 @@ server <- function(input, output) {
   ## Creates a data frame of the last nine AWAY GAMES of the away team
   away_team_data_at_away <- reactive({
     temp <- home_and_away_teams()
+    week <- week()
     awayTeam <- temp[1]
-    awayData <- filter(game_data, score_home != "NA", team_away == awayTeam)
+    awayData <- filter(game_data, score_home != "NA",
+                       schedule_week <= week | schedule_season < current_date,
+                       team_away == awayTeam)
     awayData <- head(awayData, 9)
     awayData
   })
@@ -130,7 +149,7 @@ server <- function(input, output) {
     awayData <- away_team_data_at_away()
     team_names <- home_and_away_teams()
     
-    ## Records the number of home and away wins of gthe home and away teams
+    ## Records the number of home and away wins of the home and away teams
     homeWins <- 0
     awayWins <- 0
     for(i in 1:9) {
