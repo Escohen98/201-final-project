@@ -143,7 +143,8 @@ server <- function(input, output) {
     win_rate_chart
   })
   
-  ## Creates a chart that holds the home win rate for the home team and the away win rate for the away team
+  ## Creates a chart that holds the HOME WIN RATE FOR THE HOME TEAM 
+  ## and the AWAY WIN RATE FOR THE AWAY TEAM
   home_away_win_rate_chart <- reactive({
     homeData <- home_team_data_at_home()
     awayData <- away_team_data_at_away()
@@ -172,6 +173,7 @@ server <- function(input, output) {
   #################    This calculates who is supposed to win the game   ##############
   who_wins_the_game_calculator <- reactive({
     home_away_win_rate_chart <- home_away_win_rate_chart()
+    win_rate_chart <- win_rate_chart()
   })
   
   
