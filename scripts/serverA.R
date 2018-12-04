@@ -48,19 +48,20 @@ server(function(input, output) {
   })
   
   output$home_versus_away_chart <- renderPlot({
-    temp <- home_and_away_teams()
-    home_team <- temp[2]
-    away_team <- temp[1]
+    team_names <- home_and_away_teams()
+    home_team <- team_names[2]
+    away_team <- team_names[1]
     
     home_data <- home_team_data()
     away_data <- away_team_data()
-    team_names <- home_and_away_teams()
     
+    ## Records the number of home and away team wins
+    ## Calculates win rates of home and away teams
     home_wins <- 0
     away_wins <- 0
     
-    for(i in 9) {
-      if(home_team == home_data[i, "team_home"]) {
+    for(i in 1:9) {
+      if(home_team == paste(home_data[i, "team_home"])) {
         if(home_data[i, "score_home"] > home_data[i, "score_away"]) {
           home_wins <- home_wins + 1
         }
@@ -69,7 +70,7 @@ server(function(input, output) {
           home_wins <- home_wins + 1
         }
       }
-      if(away_team == away_data[i, "team_away"]) {
+      if(away_team == paste(away_data[i, "team_away"])) {
         if(away_data[i, "score_home"] < away_data[i, "score_away"]) {
           away_wins <- away_wins + 1
         }
@@ -83,11 +84,13 @@ server(function(input, output) {
     home_win_rate <- home_wins / 9
     away_win_rate <- away_wins / 9
     
-    team_names_detailed <- c(paste(team_names[1], "in past 9 games"),
+    ## Formats strings for the title
+    team_names_detailed <- c(team_names[1],
                              paste(team_names[2], "in past 9 games"))
     win_rate_chart <- data_frame("Team_Name" = team_names,
-                               "Win_Rate" = c(away_win_rate, home_win_rate))
+                                 "Win_Rate" = c(away_win_rate, home_win_rate))
     
+    ## plots win rates for home and way teams
     ggplot(data = win_rate_chart, aes(x = Team_Name, y = Win_Rate)) + geom_bar(stat = "identity") +
       labs(title = paste("Win Rates for", team_names_detailed[1], "and", team_names_detailed[2], sep=" "))
   })
