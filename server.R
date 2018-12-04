@@ -4,11 +4,6 @@ library(ggplot2)
 
 server <- function(input, output) {
   
-  selected_week <- reactive({ input$schedule })
-  output$selected_week <- renderText({ NFL_data %>%
-      filter(schedule_week == selected_week()) %>%
-      select(game_title) })
-
   ################## Initial constants  #################
   
   ## Gets current date
@@ -279,5 +274,5 @@ server <- function(input, output) {
           "nine home and away games, respectively). This is to ensure that the",
           "statistics presented are most representative of how the teams are",
           "currently performing **")
-    })
+  })
 }
