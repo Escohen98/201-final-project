@@ -1,9 +1,20 @@
 library(shiny)
 library(dplyr)
-NFL_data <- read.csv("data/spreadspoke_scores.csv", stringsAsFactors = FALSE) %>%
-  select(schedule_season, schedule_week, team_home, team_away) %>%
-  filter(schedule_season == substr(date(), 21, 24)) %>%
-  mutate(game_title = paste(team_away, "@ ", team_home))
+
+current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
+
+game_data <- read.csv("data/spreadspoke_scores.csv") %>% 
+  filter(schedule_season == current_date)
+game_data$schedule_week <- as.numeric(game_data$schedule_week)
+game_data <- arrange(game_data, desc(schedule_week))
+
+list_of_games <- c()
+
+for (i in 1:nrow(game_data)) {
+  list_of_games <- c(list_of_games, paste0("Week ", game_data[i, "schedule_week"],
+                                           ": ", game_data[i, "team_away"],
+                                           " @ ", game_data[i, "team_home"]))
+}
 
 shinyUI(fluidPage(
   
@@ -11,16 +22,19 @@ shinyUI(fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      selectInput("schedule", label = h3("Week Select"),
-                  choices = c(1:17), selected = 1),
-      
       selectInput("game", label = h3("Game Select"),
+<<<<<<< HEAD
                   choices = textOutput("selected_week"))
+=======
+                  choices = list_of_games)
+>>>>>>> 509f7a9a33bf7035207b95f53a6d33e0df448592
     ),
   
   mainPanel(
-    plotOutput("home_and_away_chart")
-    ## plotOutput("PLOT CALL") Requires plot input
+    plotOutput("home_versus_away_chart"),
+    plotOutput("home_and_away_chart"),
+    plotOutput("point_differential_chart"),
+    textOutput("nine_game_mention")
   )
   )
 )
