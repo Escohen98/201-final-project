@@ -1,6 +1,7 @@
 library(shiny)
 library(dplyr)
 library(ggplot2)
+library(plotly)
 
 server <- function(input, output) {
   
@@ -223,7 +224,7 @@ server <- function(input, output) {
   
   
   ## Returns a chart displaying the home win rate of the home team and the away win rate of the away team
-  output$home_and_away_chart <- renderPlot({
+  output$home_and_away_chart <- renderPlotly({
     team_names <- home_and_away_teams()
     winRateChart <- home_away_win_rate_chart()
     
@@ -231,23 +232,29 @@ server <- function(input, output) {
     team_names_detailed <- c(paste(team_names[1], "in away games"),
                              paste(team_names[2], "in home games"))
     
-    ## Chart that is being returned
-    ggplot(data = winRateChart, aes(x = Team_Name, y = Win_Rate, fill = Team_Name)) + geom_bar(stat = "identity") +
-      ggtitle(paste("Win Rates for", team_names_detailed[1],
-                    "and", team_names_detailed[2])) + theme(legend.position = "none")
+    # Chart that is being returned
+    plot_ly(winRateChart, x = ~Team_Name, y = ~Win_Rate, type = "bar", 
+            marker = list(color = c("rgba(155,158,206,1)", "rgba(206,231,230,1)"),
+                          line = list(color = "rgb(8,48,107)", width = 1.5))) %>%
+      layout(title = paste("Win Rates for", team_names_detailed[1], "and", team_names_detailed[2]),
+             xaxis = list(title = "Team Name"),
+             yaxis = list(title = "Win Rate"))
   })
   
   ## Returns a chart displaying the past nine records for both home and away teams
-  output$home_versus_away_chart <- renderPlot({
+  output$home_versus_away_chart <- renderPlotly({
     win_rate_chart <- win_rate_chart()
     team_names <- home_and_away_teams()
     home_team <- team_names[2]
     away_team <- team_names[1]
     
     ## plots win rates for home and way teams
-    ggplot(data = win_rate_chart, aes(x = Team_Name, y = Win_Rate, fill = Team_Name)) + geom_bar(stat = "identity") +
-      labs(title = paste("Win Rates for", team_names[1], "and", team_names[2], sep=" ")) +
-      theme(legend.position = "none")
+    plot_ly(win_rate_chart, x = ~Team_Name, y = ~Win_Rate, type = "bar", 
+            marker = list(color = c("rgba(237,231,217,1)", "rgba(164,150,148,1)"),
+                          line = list(color = "rgb(8,48,107)", width = 1.5))) %>%
+      layout(title = paste("Win Rates for", team_names[1], "and", team_names[2]),
+             xaxis = list(title = "Team Name"),
+             yaxis = list(title = "Win Rate"))
   })
   
   ## plots the point differentials of the two teams
