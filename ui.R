@@ -29,10 +29,17 @@ shinyUI(fluidPage(
     ),
   
   mainPanel(
-    plotOutput("home_versus_away_chart"),
-    plotOutput("home_and_away_chart"),
-    plotOutput("point_differential_chart"),
-    textOutput("nine_game_mention")
+    tabsetPanel(type = "tabs",
+                tabPanel("Home vs. Away", plotOutput("home_versus_away_chart")),
+                tabPanel("Home and Away", plotOutput("home_and_away_chart")),
+                tabPanel("Point Differential", plotOutput("point_differential_chart"),
+                         textOutput("nine_game_mention"))
+    )
+    
+    ##plotOutput("home_versus_away_chart"),
+    ##plotOutput("home_and_away_chart"),
+    ##plotOutput("point_differential_chart"),
+    ##textOutput("nine_game_mention")
   )
   )
 )
