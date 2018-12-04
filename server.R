@@ -255,7 +255,7 @@ server <- function(input, output) {
     point_differential <- point_differential()
     
     ## formatting title
-    chartTitle <- paste("Point differentials (points core - points allowed) for the",
+    chartTitle <- paste("Point differentials (points scored - points allowed) for the",
                         point_differential[1, "Team_Name"], "and the",
                         point_differential[2, "Team_Name"])
     
