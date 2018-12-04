@@ -16,64 +16,108 @@ server <- function(input, output) {
   game_data$schedule_week <- as.numeric(game_data$schedule_week)
   game_data <- arrange(game_data, desc(schedule_season), desc(schedule_week))
   
+  ## Records the week the game is being played
+  week <- reactive({
+    gameTitle <- input$game
+    week <- 1
+    if (substr(gameTitle, 7, 7) == ":")
+      week <- as.numeric(substr(gameTitle, 6, 6))
+    else
+      week <- as.numeric(substr(gameTitle, 6, 7))
+    week
+  })
   
+  ## Creats a vector where
+  ## first data point is the away team of the inputted game,
+  ## second point is the home team
   home_and_away_teams <- reactive({
-    week <- input$schedule_week
-    gameTitle <- input$game_name
+    gameTitle <- input$game
+    week <- week()
     homeTeam <- ""
     awayTeam <- ""
     temp <- filter(game_data, schedule_week == week & schedule_season == current_date)
     for (i in 1:nrow(temp)) {
-      if(grepl(temp[i, "team_home"], gameTitle))
+      if(grepl(temp[i, "team_home"], gameTitle)) {
         homeTeam <- temp[i, "team_home"]
-      if(grepl(temp[i, "team_away"], gameTitle))
         awayTeam <- temp[i, "team_away"]
+      }
     }
-    home_and_away <- c(awayTeam, homeTeam)
+    home_and_away <- c(paste(awayTeam), paste(homeTeam))
     home_and_away
   })
   
+  ## Creates a data frame of the last nine GAMES of the home team
   home_team_data <- reactive({
     temp <- home_and_away_teams()
+    week <- week()
     homeTeam <- temp[2]
-    homeData <- filter(game_data, team_home == homeTeam)
-    homeData <- head(homeData, 9)
-    homeData
+    data <- filter(game_data, score_home != "NA",
+                   schedule_week <= week | schedule_season < current_date,
+                   team_home == homeTeam | team_away == homeTeam)
+    data <- head(data, 9)
+    data
   })
   
+  ## Creates a data frame of the last nine GAMES of the away team
   away_team_data <- reactive({
     temp <- home_and_away_teams()
-    awayTeam <- tempA[1]
-    awayData <- filter(game_data, team_away == awayTeam)
-    awayData <- head(awayData, 9)
-    awayData
+    week <- week()
+    awayTeam <- temp[1]
+    data <- filter(game_data, score_home != "NA",
+                   schedule_week <= week | schedule_season < current_date,
+                   team_home == awayTeam | team_away == awayTeam)
+    data <- head(data, 9)
+    data
   })
   
-  output$home_and_away_chart <- renderPlot({
-    homeData <- home_team_data()
-    awayData <- away_team_data()
+  point_differential <- reactive({
+    home_team_data <-  home_team_data()
+    away_team_data <- away_team_data()
     team_names <- home_and_away_teams()
-    homeWins <- 0
-    awayWins <- 0
-    for(i in 1:9) {
-      if(homeData[i, "score_home"] > homeData[i, "score_away"]) {
-        homeWins <- homeWins + 1 
+    homeTeam <- team_names[2]
+    awayTeam <- team_names[1]
+    home_point_differential <- 0
+    away_point_differential <- 0
+    
+    for (i in 1:9) {
+      if (homeTeam == paste(home_team_data[i, "team_home"])) {
+        home_point_differential <- home_point_differential +
+          home_team_data[i, "score_home"] -
+          home_team_data[i, "score_away"]
+      } else {
+        home_point_differential <- home_point_differential +
+          home_team_data[i, "score_away"] -
+          home_team_data[i, "score_home"]
       }
-      if(awayData[i, "score_home"] < awayData[i, "score_away"]) {
-        awayWins <- awayWins + 1 
+      
+      
+      if (awayTeam == paste(away_team_data[i, "team_home"])) {
+        away_point_differential <- away_point_differential +
+          away_team_data[i, "score_home"] -
+          away_team_data[i, "score_away"]
+      } else {
+        away_point_differential <- away_point_differential +
+          away_team_data[i, "score_away"] -
+          away_team_data[i, "score_home"]
       }
     }
-    homeWinRate <- homeWins / 9
-    awayWinRate <- awayWins / 9
     
-    team_names_detailed <- c(paste(team_names[1], "in away games"),
-                             paste(team_names[2], "in home games"))
-    winRateChart <- data_frame("Team_Name" = team_names,
-                               "Win_Rate" = c(awayWinRate, homeWinRate))
-
+    data <- data_frame("Team_Name" = team_names,
+                       "Point_Differential" =
+                         c(away_point_differential, home_point_differential))
     
-    ggplot(data = winRateChart, aes(x = Team_Name, y = Win_Rate)) + geom_bar() +
-      ggtitle(paste("Win Rates for", team_names_detailed[1],
-                    "and", team_names_detailed[2]))
+    data
+  })
+  
+  output$point_differential_chart <- renderPlot({
+    point_differential <- point_differential()
+    
+    chartTitle <- paste("Point differentials (points for - points against) for the",
+                        point_differential[1, "Team_Name"], "and the",
+                        point_differential[2, "Team_Name"])
+    
+    ggplot(data = point_differential,
+           aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
+      geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
   })
 }
