@@ -265,6 +265,7 @@ server <- function(input, output) {
       geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
   })
   
+  
   ## Explaines the data used for each chart
   output$nine_game_mention <- renderText({
     paste("** NOTE: All data used is over the nine pertinant games prior to",
@@ -274,5 +275,17 @@ server <- function(input, output) {
           "nine home and away games, respectively). This is to ensure that the",
           "statistics presented are most representative of how the teams are",
           "currently performing **")
+  })
+  
+  josh_data <- reactive({
+    temp <- home_and_away_teams()
+    week <- week()
+    homeTeam <- temp[2]
+    awayTeam <- temp[1]
+    data <- filter(game_data, score_home != "NA",
+                   schedule_week <= week | schedule_season < current_date,
+                   team_home == homeTeam | team_away == homeTeam,
+                   team_home == awayTeam | team_away == awayTeam)
+    data
   })
 }
