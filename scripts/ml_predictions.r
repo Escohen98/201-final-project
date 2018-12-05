@@ -12,7 +12,7 @@ library(caret)
 source("Summary.r")
   
 weather_effect_model <- function(team, info_data) {
-  df <- categorize_weather(prepare_for_model(info_data), 1000, 1)
+  df <- categorize_weather(prepare_for_model(info_data))
   #Step 1
   sapply(df, sd)
   #Step 2
@@ -20,7 +20,7 @@ weather_effect_model <- function(team, info_data) {
   df$weather_humidity <- as.numeric(df$weather_humidity)
   mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph + weather_humidity + ave_weather, 
                  data=df, family="binomial")
-  df
+  list(mylogit, df)
 }
 
 visualize <- function(mylogit) {
@@ -54,12 +54,12 @@ get_data1 <- function(team, data) {
 ##  2  | weather_humidity
 ##  3  | weather_wind_mph
 get_data2 <- function(model) {
-  mylogit <- model[1]
-  df <- model[2]
+  mylogit <- model[[1]]
+  df <- model[[2]]
   #coeffs <- c(df$weather_temperature, df$weather_humidity, df$weather_wind_mph)
   #coeffs <- coeffs[!coeffs[choice]]
-  newdata2 <- with(df, data.frame(weather_temperature = rep(seq(from = 20, to = 80, length.out = 100),
-              4), weather_wind_mph = mean(weather_wind_mph), weather_humidity = mean(weather_humidity), 
+  newdata2 <- with(df, data.frame(weather_wind_mph = rep(seq(from = 0, to = 40, length.out = 100),
+              4), weather_temperature = mean(weather_temperature), weather_humidity = mean(weather_humidity), 
               ave_weather = factor(rep(1:4, each = 100))))
   newdata2
 }
@@ -75,8 +75,8 @@ get_data2 <- function(model) {
 ##  3  | weather_wind_mph
 get_data3 <- function(model) {
   model2 <- get_data2(model)
-  mylogit <- model[1]
-  df <- model[2]
+  mylogit <- model[[1]]
+  df <- model[[2]]
   newdata2 <- model2
   
   newdata3 <- cbind(newdata2, predict(mylogit, newdata = newdata2, type = "link",
@@ -90,11 +90,10 @@ get_data3 <- function(model) {
 }
 
 plot_data3 <- function(newdata3) {
-  ggplot(newdata3, aes(x = gre, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
-                                      ymax = UL, fill = rank), alpha = 0.2) + geom_line(aes(colour = rank),
+  ggplot(newdata3, aes(x = weather_wind_mph, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
+                                      ymax = UL, fill = ave_weather), alpha = 0.2) + geom_line(aes(colour = ave_weather),
                                       size = 1)
 }
 
 demo <- weather_effect_model("", spreadspoke)
-View(demo[2])
 plot_data3(get_data3(demo))
