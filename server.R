@@ -410,7 +410,7 @@ server <- function(input, output) {
     home <- data.frame(c(probabilities[2]$ave_weather, probabilities[2]$rankP))
     away <- data.frame(c(probabilities[3]$ave_weather, probabilities[3]$rankP))
     names(home) <- c(print("Rank"), print("rankP_home"))
-    names(away) <- c(print("Rank"), print("rankP_away"))
+    names(away) <- c(print("Rank"), print("rankP_home"))
     rankPs <- full_join(home, away, by="rank")
     
     #Set Game Rank to Custom Color
@@ -424,7 +424,7 @@ server <- function(input, output) {
     away_marker <- c(away_color, away_color, away_color, away_color, away_color, away_color)
     away_marker[rank] <- away_special
     #Some code below is taken from https://plot.ly/r/bar-charts/#customizing-individual-bar-colors
-    plot_ly(df, x = ~Rank, y = -rankP_home, type='bar', name='Home Team',
+    plot_ly(df, x = ~Rank, y = ~rankP_home, type='bar', name='Home Team',
             marker = list(color = home_marker)) %>%
       add_trace(y = ~rankP_away, name='Away Team', marker = list(color = away_marker)) %>%
       layout(title = "Win Probability vs. Weather Conditions",
