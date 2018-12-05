@@ -46,7 +46,7 @@ shinyUI(fluidPage(
   mainPanel(
     h1("Welcome to the NFL Game Predictor!"),
     h3("Data Collected from:", a("Here", href = 'https://www.kaggle.com/tobycrabtree/nfl-scores-and-betting-data')),
-    tabsetPanel(type = "tabs",
+    tabsetPanel(type = "pills",
                 tabPanel("Prediction", h3(textOutput("winning_team")), img("", src = "https://www.stmaryriverside.org/cms/lib/IL50000027/Centricity/Domain/80/JVfootball.png")),
                 tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart"),
                          textOutput("win_rate_explanation")),
