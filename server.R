@@ -73,8 +73,8 @@ server <- function(input, output) {
     week <- week()
     homeTeam <- temp[2]
     df <- filter(game_data, score_home != "NA",
-                   schedule_week <= week | schedule_season < current_date,
-                   team_home == homeTeam | team_away == homeTeam)
+                 schedule_week <= week | schedule_season < current_date,
+                 team_home == homeTeam | team_away == homeTeam)
     df <- head(df, 9)
     df
   })
@@ -97,8 +97,8 @@ server <- function(input, output) {
     week <- week()
     awayTeam <- temp[1]
     df <- filter(game_data, score_home != "NA",
-                   schedule_week <= week | schedule_season < current_date,
-                   team_home == awayTeam | team_away == awayTeam)
+                 schedule_week <= week | schedule_season < current_date,
+                 team_home == awayTeam | team_away == awayTeam)
     df <- head(df, 9)
     df
   })
@@ -122,8 +122,8 @@ server <- function(input, output) {
     homeTeam <- temp[2]
     awayTeam <- temp[1]
     df <- filter(game_data, score_home != "NA",
-                   schedule_week <= week | schedule_season < current_date,
-                   team_home == homeTeam | team_away == homeTeam)
+                 schedule_week <= week | schedule_season < current_date,
+                 team_home == homeTeam | team_away == homeTeam)
     df <- filter(df, team_home == awayTeam | team_away == awayTeam)
     df
   })
@@ -234,8 +234,8 @@ server <- function(input, output) {
     
     ## putting differentials in a data table
     df <- data_frame("Team_Name" = team_names,
-                       "Point_Differential" =
-                         c(away_point_differential, home_point_differential))
+                     "Point_Differential" =
+                       c(away_point_differential, home_point_differential))
     
     df
   })
@@ -274,10 +274,10 @@ server <- function(input, output) {
       awayTeamWins <- awayTeamWins / nrow(temp)
     }
     
-
+    
     
     df <- data_frame("Team_Names" = teamNames,
-                       "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
+                     "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
   })
   
   #Uses ML algorithm to determine the win probability of each team based on the climate. 
@@ -439,7 +439,7 @@ server <- function(input, output) {
           "the weather during the game, and the game’s outcome, the predictor",
           "can assist sports gamblers from the fantasy league to the casual fan.")
   })
-    output$nine_game_mention <- renderText({
+  output$nine_game_mention <- renderText({
     paste("** NOTE: All data used is over the nine pertinant games prior to",
           "the game being predicted (ex: the chart comparing records looks at the",
           "teams' last nine games, while the chart comparing the home team's",
