@@ -25,6 +25,9 @@ shinyUI(fluidPage(
       selectInput("game", label = h3("Game Select"),
                   choices = list_of_games),
       
+      #radioButtons("temp", label = ("What Should the Weather For the Game Be?"),
+      #             choices = c("Above 50 Degrees", "Below 50 Degrees")),
+      
       radioButtons("win_rate_importance", label =
                      ("How Important is Overall Win Rate of the Teams to You?"),
                    choices = buttons, selected = "Very Important"),
@@ -37,17 +40,19 @@ shinyUI(fluidPage(
                    choices = buttons, selected = "Fairly Important"),
       radioButtons("point_differential_importance", label =
                      ("How Important is the Point Differential of the Teams to You?"),
-                   choices = buttons, selected = "Very Important"),
-      radioButtons("weather_importance", label =
-                     ("How Important is the Play of Teams in Weather Similar to the Upcoming Game to You?"),
-                   choices = buttons, selected = "Fairly Important")
+                   choices = buttons, selected = "Very Important")
+      #radioButtons("weather_importance", label =
+      #               ("How Important is the Play of Teams in Weather Similar to the Upcoming Game to You?"),
+      #             choices = buttons, selected = "Fairly Important")
     ),
   
   mainPanel(
     h1("Welcome to the NFL Game Predictor!"),
     h3("Data Collected from:", a("Here", href = 'https://www.kaggle.com/tobycrabtree/nfl-scores-and-betting-data')),
     tabsetPanel(type = "pills",
-                tabPanel("Prediction", h3(textOutput("winning_team")), img("", src = "https://www.stmaryriverside.org/cms/lib/IL50000027/Centricity/Domain/80/JVfootball.png")),
+                tabPanel("Prediction", h3(textOutput("winning_team")),
+                         img("", src =
+                               "https://www.stmaryriverside.org/cms/lib/IL50000027/Centricity/Domain/80/JVfootball.png")),
                 tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart"),
                          textOutput("win_rate_explanation")),
                 tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart"),
@@ -56,6 +61,7 @@ shinyUI(fluidPage(
                          textOutput("point_differential_description")),
                 tabPanel("Head-to-Head", plotlyOutput("head_to_head_plot"),
                          textOutput("head_to_head_description")),
+                #tabPanel("Weather", plotlyOutput("weather_chart")),
                 tabPanel("About The Site", h4(textOutput("about")),
                          h5((textOutput("nine_game_mention"))))
     )

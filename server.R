@@ -365,7 +365,7 @@ server <- function(input, output) {
     point_differential <- point_differential()
     
     ## formatting title
-    chartTitle <- paste("Point differentials (points scored - points allowed) for the",
+    chartTitle <- paste("Point differentials for the",
                         point_differential[1, "Team_Name"], "and the",
                         point_differential[2, "Team_Name"])
     
@@ -376,10 +376,6 @@ server <- function(input, output) {
       layout(title = chartTitle,
              xaxis = list(title = "Team Name"),
              yaxis = list(title = "Point Differential"))
-    
-    # ggplot(data = point_differential,
-    #        aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
-    #   geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
   })
   
   
@@ -401,21 +397,11 @@ server <- function(input, output) {
           "currently performing **")
   })
   
-  josh_data <- reactive({
-    temp <- home_and_away_teams()
-    week <- week()
-    homeTeam <- temp[2]
-    awayTeam <- temp[1]
-    data <- filter(game_data, score_home != "NA",
-                   schedule_week <= week | schedule_season < current_date,
-                   team_home == homeTeam | team_away == homeTeam,
-                   team_home == awayTeam | team_away == awayTeam)
-    data
-  })
-  
   output$winning_team <- renderText ({
-    if (who_wins_calculator() != "Based on our calculations, it's a tossup! Select tabs above for more information.") {
-      paste("Based on our calculations, it is projected that the", who_wins_calculator(), "will win. Select tabs above for more information.")
+    if (who_wins_calculator() !=
+        "Based on our data, it's a tossup! Select tabs above for more information.") {
+      paste("Based on our calculations, it is projected that the", who_wins_calculator(),
+            "will win. Select tabs above for more information.")
     } else {
       who_wins_calculator()
     }
