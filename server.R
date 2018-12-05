@@ -515,4 +515,13 @@ server <- function(input, output) {
           "based on the weather.")
   })
   
+  
+  output$weather_problem <- renderText(({
+    paste("Through our study of the data, we concluded the impact of weather on the win rates of teams",
+          "is little to none. Originally, we made weather impact one of the four prompts we wanted",
+          "to havepredict game outcome. However, with the lack of change in data, adding this to the",
+          "algotithm would be the equivilant of doubling thwe value of the win rate chart. Therefore,",
+          "we changed the algorithm to incorperate point differential instead, as it turned out to be",
+          "a better gague of a team's recent performance than what weather would show us.")
+  }))
 }
