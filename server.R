@@ -414,4 +414,20 @@ server <- function(input, output) {
     }
   })
   
+  ## Makes a chart comparing head-to-head results
+  output$head_to_head_plot <- renderPlotly({
+    teamNames <- home_and_away_teams()
+    data <- head_to_head()
+    
+    if (data[1, 2] == data[2, 2]) {
+      data[1, 2] <- .5
+      data[2, 2] <- .5
+    }
+    
+    plot_ly(data, labels = ~Team_Names, values = ~Head_to_Head_Win_Rate, type = "pie") %>% 
+      layout(title = "Head-to-Head Matchup Record",
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+  })
+  
 }
