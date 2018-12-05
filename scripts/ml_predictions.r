@@ -115,5 +115,5 @@ visualize <- function(mylogit) {
   #Chi-Squared test (Step 3)
   print(wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 5:7))
   print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
-  with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
+  print(with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE)))
 }
