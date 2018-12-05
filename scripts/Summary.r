@@ -7,7 +7,7 @@ if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) {
   file_path <- paste0('../', file_path)
 }
 teams <- read.csv(file_path, stringsAsFactors = FALSE)
-#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
+spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
@@ -57,12 +57,30 @@ append_winner <- function(data) {
 #@column ave_weather - Total value of all weather components multipled by their weights. 
 prepare_for_model <- function(info_data, weights=c(1,1,1)) {
   suppressWarnings(info_data$weather_temperature <- as.numeric(info_data$weather_temperature))
-  df <- filter(info_data, !(is.na(weather_temperature) | is.na(weather_wind_mph) | is.na(weather_humidity) & (score_home == score_away))) %>%
+  df <- filter(info_data, !(is.na(weather_temperature) | is.na(weather_wind_mph) | is.na(weather_humidity) | (score_home == score_away))) %>%
     mutate(home_win = ((score_home-score_away)/abs(score_home-score_away))) %>%
     mutate(ave_weather = ((weather_temperature*weights[1] + weather_wind_mph * weights[2] + as.numeric(weather_humidity) * weights[3]))) %>%
-    select(home_win, ave_weather, weather_temperature, weather_wind_mph, weather_humidity)
-  df[home_win == -1] <- 0
+    select(home_win, ave_weather, weather_temperature, weather_wind_mph, weather_humidity) %>%
+    filter(!is.na(home_win))
+  condition <- df$home_win == -1
+  df[condition,1] <-  0
+  df
 }
+
+#Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#54.0   116.0   134.0   132.2   149.0   192.0    3284
+#Converts data to categorical variable from 1 to 4 based on spread of weather data. 
+#1 is the highest rank (greatest temp + humidity + wind) and 4 is the least. 
+categorize_weather <- function(this_data) {
+  data <- filter(this_data, !is.na(ave_weather))[1:100,]
+  View(data)
+  condition <- (data$ave_weather >= 0) & (data$ave_weather < 116.0)
+  data[condition] <- 4
+  data[(data$ave_weather >= 116.0) & (data$ave_weather < 134.0)] <- 3
+  data[(data$ave_weather >= 134.0) & (data$ave_weather < 149.0)] <- 2
+  data[(data$ave_weather >= 149.0) & (data$ave_weather < 193.0)] <- 1
+}
+categorize_weather(prepare_for_model(spreadspoke))
 
 #Appends home_id and away_id to table.
 append_ids <- function(data) {
