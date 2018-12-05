@@ -46,6 +46,7 @@ server <- function(input, output) {
     home_and_away
   })
   
+  ## Creates a data frame containing the win rate of the home team during cold and warm games
   home_team_weather <- reactive({
     teamNames <- home_and_away_teams()
     homeTeam <- teamNames[2]
@@ -58,6 +59,8 @@ server <- function(input, output) {
     numColdGames <- 0
     warmRecord <- 0
     coldRecord <- 0
+    
+    ## Counting the number of cold and warm games played, and the results of the games
     for (i in 1:nrow(data)) {
       if (homeTeam == paste(data[i, "team_home"])) {
         if (data[i, "weather_temperature"] >= 50) {
@@ -94,10 +97,11 @@ server <- function(input, output) {
     warmRecord <- warmRecord / numWarmGames
     coldRecord <- coldRecord / numColdGames
     
-    home_team_weather <- data_frame("Team_Name" = c("Cold Weather", "Warm Weather"),
+    home_team_weather <- data_frame("Temperature" = c("Cold Weather", "Warm Weather"),
                                     "Temp_Based_Record" = c(coldRecord, warmRecord))
   })
   
+  ## Creates a data frame containing the win rate of the away team during cold and warm games
   away_team_weather <- reactive({
     teamNames <- home_and_away_teams()
     awayTeam <- teamNames[1]
@@ -110,6 +114,8 @@ server <- function(input, output) {
     numColdGames <- 0
     warmRecord <- 0
     coldRecord <- 0
+    
+    ## Counting the number of cold and warm games played, and the results of the games
     for (i in 1:nrow(data)) {
       if (awayTeam == paste(data[i, "team_home"])) {
         if (data[i, "weather_temperature"] >= 50) {
@@ -146,10 +152,11 @@ server <- function(input, output) {
     warmRecord <- warmRecord / numWarmGames
     coldRecord <- coldRecord / numColdGames
     
-    away_team_weather <- data_frame("Team_Name" = c("Cold Weather", "Warm Weather"),
+    away_team_weather <- data_frame("Temperature" = c("Cold Weather", "Warm Weather"),
                                     "Temp_Based_Record" = c(coldRecord, warmRecord))
   })
   
+  ## Creates a data frame containing the win rate of the home and away team during the given weather
   weather_chart <- reactive({
     temperature <- input$temp
     teamNames <- home_and_away_teams()
@@ -166,4 +173,22 @@ server <- function(input, output) {
     data
   })
   
+  ## Creates chart of win rates based on Weather
+  output$home_weather_chart <- renderPlotly ({
+    home_team_weather <- away_team_weather()
+    away_team_weather <- away_team_weather()
+    teamNames <- home_and_away_teams()
+    homeTeam <- teamNames[2]
+    awayTeam <- teamNames[1]
+    
+    data <- data_frame("Temperature" = c("Cold Weather", "Warm Weather"),
+                       "Home_Team" = home_team_weather$Temp_Based_Record,
+                       "Away_Team" = away_team_weather$Temp_Based_Record)
+    
+    chartTitle <- paste("Win Rate of the Teams in Cold and Warm Weather")
+    
+    plot_ly(data, x = ~Temperature, y = ~Home_Team, type = 'bar', name = homeTeam) %>% 
+      add_trace(y = ~Away_Team, name = awayTeam) %>%
+      layout(title = chartTitle, yaxis = list(title = 'Win Rate'), barmode = 'group')
+  })
 }
