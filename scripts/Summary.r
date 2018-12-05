@@ -1,13 +1,5 @@
 library(dplyr)
 
-##Enables scripts to run in either main dir or scripts folder.
-file_path <- "data/"
-if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
-  file_path <- paste0('../', file_path)
-}
-stadiums <- read.csv(paste0(file_path,"nfl_stadiums.csv"), stringsAsFactors = FALSE)
-teams <- read.csv(paste0(file_path,"nfl_teams.csv"), stringsAsFactors = FALSE)
-NFL <- read.csv(paste0(file_path,"nfl.csv"), stringsAsFactors = FALSE)
 #spreadspoke <- read.csv(file_path, stringsAsFactors = FALSE)
 
 #Gets and returns all rows with given team_name or team_id from data. 
@@ -35,12 +27,18 @@ get_team_result <- function(data) {
 }
 
 stadium_to_rank <- function(team) {
+  condensed_stadiums <- select(stadiums, stadium=stadium_name, 
+                               weather=stadium_weather_type) %>%
+    filter(!is.na(weather))
+  for(team in condensed_stadiums) {}
+  team_name <- id_to_name(team)
   
 }
 
 #Appends and returns a dataframe containing the given data and a winner_id column 
 #that has the team_id of the team that won each game. 
 #Sets value to NA if game has yet to be played. 
+#Very slow.
 categorize_weather <- function(this_data, max=0, min=1) {
   data <- filter(this_data,!is.na(ave_weather))
   if(max == 0) {
@@ -64,6 +62,7 @@ categorize_weather <- function(this_data, max=0, min=1) {
 }
 
 #Appends home_id and away_id to table.
+#Very slow.
 append_ids <- function(data) {
   home_ids <- c()
   away_ids <- c()
@@ -83,16 +82,10 @@ append_ids <- function(data) {
   something <- mutate(data, home_id = home_ids, away_id = away_ids)
 }
 
-#Adds columns to CSV
-#test_table <- append_ids(spreadspoke)
-#View(test_table)
-#n^2. Only run once. 
-#write.csv(append_winner(append_ids(spreadspoke)), file = "../data/spreadspoke_scores.csv", row.names=FALSE)
-
 #Takes a team ID and returns the given team name (does not include location).
 #Works for team_id or team_id_pfr.
 id_to_name <- function(id) {
-  team <- select(teams, team_name_short, team_id, team_id_pfr) %>%
+  team <- select(get_teams(), team_name_short, team_id, team_id_pfr) %>%
     filter((as.character(team_id) == as.character(id)) || (as.character(team_id_pfr) == as.character(id)))
   team$team_name_short
 }
@@ -100,7 +93,7 @@ id_to_name <- function(id) {
 #Takes a team name and returns the given team id (not the team_id_pfr).
 #Make sure not to include the team's location (team_name) and only the name (team_name_short)
 name_to_id <- function(name) {
-  team <- select(teams, team_name_short, team_id) %>%
+  team <- select(get_teams, team_name_short, team_id) %>%
     filter(as.character(team_name_short) == as.character(shorten_name(name)))
   team$team_id
 }
@@ -126,3 +119,36 @@ get_year_data <- function(year, data) {
 shorten_name <- function(full_name) {
   tail(strsplit(full_name, " ")[[1]], 1)
 }
+
+#Returns the relative file path of the file.
+#Path is dependent on working directory. 
+#Can be in either scripts or main directory.
+get_file_path <- function(file) {
+  file_path <- "data/"
+  if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
+    file_path <- paste0('../', file_path, file)
+  }
+}
+
+#Returns a dataframe containing stadium information
+get_stadiums <- function() {
+  stadiums <- read.csv(get_file_path("nfl_stadiums.csv"), stringsAsFactors = FALSE)
+}
+
+#Returns a dataframe containing team information
+get_teams <- function() {
+  teams <- read.csv(get_file_path("nfl_teams.csv"), stringsAsFactors = FALSE)
+}
+
+#Returns a dataframe containing information on which team plays at which stadium.
+#Also updates Chargers and Rams stadiums
+get_NFL <- function() {
+  NFL <- read.csv(get_file_path("nfl.csv"), stringsAsFactors = FALSE)
+  NFL[8,2] <- "Los Angeles Memorial Colisium"
+  NFL[24,2] <- "StubHub Center"
+  NFL
+}
+
+#Adds columns to CSV
+#n^2. Only run once. 
+#write.csv(append_winner(append_ids(spreadspoke)), file = "../data/spreadspoke_scores.csv", row.names=FALSE)
