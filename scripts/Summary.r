@@ -211,7 +211,11 @@ get_file_path <- function(file) {
   file_path <- "data/"
   if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
     file_path <- paste0('../', file_path, file)
+  } else {
+    file_path <- paste0(file_path, file)
   }
+  
+  return(file_path)
 }
 
 #Returns a dataframe containing stadium information
