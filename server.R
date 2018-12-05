@@ -113,6 +113,19 @@ server <- function(input, output) {
     awayData
   })
   
+  ## Creates a data frame holding all the games played between the teams over the last three years
+  head_to_head_data <- reactive({
+    temp <- home_and_away_teams()
+    week <- week()
+    homeTeam <- temp[2]
+    awayTeam <- temp[1]
+    data <- filter(game_data, score_home != "NA",
+                   schedule_week <= week | schedule_season < current_date,
+                   team_home == homeTeam | team_away == homeTeam,
+                   team_home == awayTeam | team_away == awayTeam)
+    data
+  })
+  
   ## Creates a chart that holds the win rate for the home team and the away team 
   win_rate_chart <- reactive({
     team_names <- home_and_away_teams()
@@ -223,6 +236,43 @@ server <- function(input, output) {
                          c(away_point_differential, home_point_differential))
     
     data
+  })
+  
+  ## This creates a chart that compares the head-to-head win rates of the two teams
+  head_to_head <- reactive({
+    temp <- head_to_head_data()
+    teamNames <- home_and_away_teams()
+    homeTeamWins <- 0
+    awayTeamWins <- 0
+    
+    ## counts how many head-to-head games each team won
+    for (i in 1:nrow(temp)) {
+      if (teamNames[2] == paste(temp[i, "team_home"])) {
+        if (temp[i, "score_home"] > temp[i, "score_away"]) {
+          homeTeamWins <- homeTeamWins + 1
+        } else if (temp[i, "score_home"] < temp[i, "score_away"]) {
+          awayTeamWins <- awayTeamWins + 1
+        } else {
+          homeTeamWins <- homeTeamWins + 0.5
+          awayTeamWins <- awayTeamWins + 0.5
+        }
+      } else {
+        if (temp[i, "score_home"] < temp[i, "score_away"]) {
+          homeTeamWins <- homeTeamWins + 1
+        } else if (temp[i, "score_home"] > temp[i, "score_away"]) {
+          awayTeamWins <- awayTeamWins + 1
+        } else {
+          homeTeamWins <- homeTeamWins + 0.5
+          awayTeamWins <- awayTeamWins + 0.5
+        }
+      }
+    }
+    
+    homeTeamWins <- homeTeamWins / nrow(temp)
+    awayTeamWins <- awayTeamWins / nrow(temp)
+    
+    data <- data_frame("Team_Names" = teamNames,
+                       "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
   })
   
   #################    This calculates who is supposed to win the game   ##############
