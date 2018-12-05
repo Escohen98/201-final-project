@@ -283,7 +283,8 @@ server <- function(input, output) {
   #Creates a chart and compares likelyhood of winning based on weather.
   weather_chart <- reactive({
     teams <- home_and_away_teams()
-    print(paste(teams[1], teams[2]))
+    home_team <- get_data1(weather_effect_model(teams[1], TRUE, get_scores()))
+    away_team <- get_data1(weather_effect_model(teams[1], FALSE, get_scores()))
   })
   
   #################    This calculates who is supposed to win the game   ##############
