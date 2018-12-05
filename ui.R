@@ -46,6 +46,7 @@ shinyUI(fluidPage(
   
   mainPanel(
     tabsetPanel(type = "tabs",
+                tabPanel("Prediction", textOutput("winning_team")),
                 tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart")),
                 tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart")),
                 tabPanel("Point Differential", plotOutput("point_differential_chart")),

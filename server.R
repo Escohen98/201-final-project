@@ -259,6 +259,13 @@ server <- function(input, output) {
     } else {
       away_team_score <- (away_team_score + convert_importance(input$weather_importance))
     }
+    this_team_wins <- ""
+    if (home_team_score > away_team_score) {
+      this_team_wins <- win_rate_chart[2,1]
+    } else {
+      this_team_wins <- win_rate_chart[1,1]
+    }
+    this_team_wins
   })
   
   ################# Outputs begin here   #########################
@@ -335,6 +342,10 @@ server <- function(input, output) {
                    team_home == homeTeam | team_away == homeTeam,
                    team_home == awayTeam | team_away == awayTeam)
     data
+  })
+  
+  output$winning_team <- renderText ({
+    h3(paste("Based on our calculations, it is projected that", who_wins_calculator(), "will win. Select tabs above for more information."))
   })
   
 }
