@@ -7,30 +7,33 @@
 library(aod)
 library(ggplot2)
 library(knitr)
+library(caret)
 
 source("Summary.r")
   
 weather_effect_model <- function(team, info_data) {
   df <- categorize_weather(prepare_for_model(info_data), 1000, 1)
-  head(df)
   #Step 1
   sapply(df, sd)
-  print(xtabs(~away_win + ave_weather, data=df))
   #Step 2
   df$ave_weather <- factor(df$ave_weather)
   df$weather_humidity <- as.numeric(df$weather_humidity)
-  mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph - weather_humidity + ave_weather, 
+  mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph + weather_humidity + ave_weather, 
                  data=df, family="binomial")
-  c(mylogit, df)
+  df
 }
 
 visualize <- function(mylogit) {
   summary(mylogit)
+  sapple(df, sd)
+  print(xtabs(~away_win + ave_weather, data=df))
   #Chi-Squared test (Step 3)
   print(wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 5:7))
   print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
   with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
 }
+
+#weather_effect_model("", spreadspoke)
 
 #Returns the probability a given team will win a game given the temperatures.
 get_data1 <- function(team, data) {
@@ -45,26 +48,36 @@ get_data1 <- function(team, data) {
 }
 
 #Returns a comparison showing the impact of the given choice has on the result. 
-get_data2 <- function(model, choice) {
+#choice must be the following:
+## Key | Value
+##  1  | weather_temperature
+##  2  | weather_humidity
+##  3  | weather_wind_mph
+get_data2 <- function(model) {
   mylogit <- model[1]
   df <- model[2]
-  coeffs <- c(df$weather_temperature, df$weather_humidity, df$weather_wind_mph)
-  the_choice = coeffs[choice]
-  coeffs <- coeffs[!coeffs[choice]]
-  newdata2 <- with(df, data.frame(the_choice = rep(seq(from = 20, to = 80, length.out = 100),
-                                                4), coeffs[1] = mean(coeffs[1]), coeffs[2] = mean(coeffs[2]),
-                                      ave_weather = factor(rep(1:4, each = 100))))
+  #coeffs <- c(df$weather_temperature, df$weather_humidity, df$weather_wind_mph)
+  #coeffs <- coeffs[!coeffs[choice]]
+  newdata2 <- with(df, data.frame(weather_temperature = rep(seq(from = 20, to = 80, length.out = 100),
+              4), weather_wind_mph = mean(weather_wind_mph), weather_humidity = mean(weather_humidity), 
+              ave_weather = factor(rep(1:4, each = 100))))
+  newdata2
 }
 
 #"The code to generate the predicted probabilities (the first line below) is the same as before, 
 #except we are also going to ask for standard errors so we can plot a confidence interval. 
 #We get the estimates on the link scale and back transform both the predicted values and 
 #confidence limits into probabilities."
-get_data3 <- function(model, choice) {
-  model2 <- get_data2(model, choice)
+#choice must be the following:
+## Key | Value
+##  1  | weather_temperature
+##  2  | weather_humidity
+##  3  | weather_wind_mph
+get_data3 <- function(model) {
+  model2 <- get_data2(model)
   mylogit <- model[1]
   df <- model[2]
-  newdata2 <- model2[3]
+  newdata2 <- model2
   
   newdata3 <- cbind(newdata2, predict(mylogit, newdata = newdata2, type = "link",
                                       se = TRUE))
@@ -81,3 +94,7 @@ plot_data3 <- function(newdata3) {
                                       ymax = UL, fill = rank), alpha = 0.2) + geom_line(aes(colour = rank),
                                       size = 1)
 }
+
+demo <- weather_effect_model("", spreadspoke)
+View(demo[2])
+plot_data3(get_data3(demo))

@@ -1,14 +1,20 @@
 library(dplyr)
 
-#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
-
-#Gets and returns all rows with given team_name or team_id from data. 
-get_team_data <- function(team, data) {
+#Gets and returns all rows with given team_name or team_id from data.
+#Returns rows of only home if stadium == home, only away if stadium == away, 
+#otherwise returns both.
+get_team_data <- function(team, data, stadium="") {
   team_data <- ""
   if(nchar(team) != 3) {
     name_to_id(team)[1]
   }
+  if(stadium == "home") {
+    team_data <- filter(data, home_id == team)
+  } else if(stadium == "away") {
+    team_data <- filter(data, away_id == team)
+  } else {
   team_data <- filter(data, (home_id == team) | (away_id == team))
+  }
   team_data
 }
 
@@ -213,4 +219,6 @@ get_NFL <- function() {
 
 #Adds columns to CSV
 #n^2. Only run once. 
-#write.csv(append_winner(append_ids(spreadspoke)), file = "../data/spreadspoke_scores.csv", row.names=FALSE)
+#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
+#write.csv(append_winner(append_ids(spreadspoke)), file = "../data/spreadspoke_scores.csv", 
+#                                                                          row.names=FALSE)
