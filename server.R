@@ -439,14 +439,30 @@ server <- function(input, output) {
   
   ## Explains what team win rates tab means
   output$win_rate_explanation <- renderText({
-    paste("This is plot compares the win rates of two teams",
+    paste("This plot compares the win rates of two teams",
           "i.e. win rates is games won over total games played")
   })
   
   ## Explains what team win rates tab means
   output$home_away_explanation <- renderText({
-    paste("This is plot compares the the home win rate of the home team", 
+    paste("This plot compares the the home win rate of the home team", 
           "and the away win rate of the away team")
   })
+  
+  ## Describes the head-to-head chart
+  output$head_to_head_description <- renderText({
+    paste("This plot compares the win rate of the two teams in head-to-head",
+          "matches (i.e. games where they played each other)",
+          "over the last three years")
+  })
+  
+  
+  ## Describes the point differential chart
+  output$point_differential_description <- renderText({
+    paste("This plot compares the point differentials of the two teams.",
+          "Point differential is the total points scored by a team subtracted by",
+          "the total points they have allowed their opponents to score")
+  })
+  
   
 }
