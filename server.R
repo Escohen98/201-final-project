@@ -283,7 +283,7 @@ server <- function(input, output) {
     home_away_win_rate_chart <- home_away_win_rate_chart()
     win_rate_chart <- win_rate_chart()
     point_differential <- point_differential()
-    #head_to_head <- head_to_head()
+    head_to_head <- head_to_head()
     #weather_chart <- weather_chart()
     home_team_score <- 0
     away_team_score <- 0
@@ -302,11 +302,11 @@ server <- function(input, output) {
     } else if (point_differential[2,2] < point_differential[1,2]){
       away_team_score <- (away_team_score + convert_importance(paste(input$point_differential_importance)))
     }
-    #if (head_to_head[2,2] > head_to_head[1,2]) {
-    #  home_team_score <- (home_team_score + convert_importance(paste(input$head_to_head_importance)))
-    #} else if (head_to_head[2,2] < head_to_head[1,2]) {
-    #  away_team_score <- (away_team_score + convert_importance(paste(input$head_to_head_importance)))
-    #}
+    if (head_to_head[2,2] > head_to_head[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(paste(input$head_to_head_importance)))
+    } else if (head_to_head[2,2] < head_to_head[1,2]) {
+      away_team_score <- (away_team_score + convert_importance(paste(input$head_to_head_importance)))
+    }
     #if (weather_chart[2,2] > weather_chart[1,2]) {
     #  home_team_score <- (home_team_score + convert_importance(paste(input$weather_importance)))
     #} else if (weather_chart[2,2] < weather_chart[1,2]){

@@ -19,8 +19,7 @@ for (i in 1:nrow(game_data)) {
 
 shinyUI(fluidPage(
   
-  titlePanel("NFL Game Predictor"),
-  
+  headerPanel("NFL Game Predictor"), img("", src = "data/football.png"),
   sidebarLayout(
     sidebarPanel(
       selectInput("game", label = h3("Game Select"),
@@ -45,8 +44,10 @@ shinyUI(fluidPage(
     ),
   
   mainPanel(
+    h1("Welcome to the NFL Game Predictor!"),
+    h3("Data Collected from:", a("Here", href = 'https://www.kaggle.com/tobycrabtree/nfl-scores-and-betting-data')),
     tabsetPanel(type = "tabs",
-                tabPanel("Prediction", textOutput("winning_team")),
+                tabPanel("Prediction", h3(textOutput("winning_team"))),
                 tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart")),
                 tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart")),
                 tabPanel("Point Differential", plotlyOutput("point_differential_chart")),
