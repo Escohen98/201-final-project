@@ -40,10 +40,10 @@ shinyUI(fluidPage(
                    choices = buttons, selected = "Fairly Important"),
       radioButtons("point_differential_importance", label =
                      ("How Important is the Point Differential of the Teams?"),
-                   choices = buttons, selected = "Very Important")
-      #radioButtons("weather_importance", label =
-      #               ("How Important is the Play of Teams in Weather Similar to the Upcoming Game?"),
-      #             choices = buttons, selected = "Fairly Important")
+                   choices = buttons, selected = "Very Important"),
+      radioButtons("weather_importance", label =
+                     ("How Important is the Play of Teams in Weather Similar to the Upcoming Game?"),
+                   choices = buttons, selected = "Fairly Important")
     ),
   
   mainPanel(
