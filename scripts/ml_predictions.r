@@ -36,8 +36,8 @@ visualize <- function(mylogit) {
 #weather_effect_model("", spreadspoke)
 
 #Returns the probability a given team will win a game given the temperatures.
-get_data1 <- function(team, data) {
-  model <- weather_effect_model(team, data)
+get_data1 <- function(team, dataf) {
+  model <- weather_effect_model(team, dataf)
   mylogit <- model[1]
   df <- model[2]
   newdata1 <- with(df, data.frame(weather_temperature = mean(weather_temperature), 
