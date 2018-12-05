@@ -48,6 +48,22 @@ append_winner <- function(data) {
   new_data <- mutate(data, winner_id=winner)
 }
 
+#Creates and returns a new dataframe containing the columns home_win and ave_weather.
+#@param info_data - the dataframe containing the necessary data
+#@param weights - A list of values to be multiplied for each weather feature 
+#                 format: (temperature, wind, humidity).
+#@return df - dataframe containing the columns home_win and ave_weather
+#@column home_win - Contains a 1 if the home team won, otherwise 0. Ties are omitted.
+#@column ave_weather - Total value of all weather components multipled by their weights. 
+prepare_for_model <- function(info_data, weights=c(1,1,1)) {
+  suppressWarnings(info_data$weather_temperature <- as.numeric(info_data$weather_temperature))
+  df <- filter(info_data, !(is.na(weather_temperature) | is.na(weather_wind_mph) | is.na(weather_humidity) & (score_home == score_away))) %>%
+    mutate(home_win = ((score_home-score_away)/abs(score_home-score_away))) %>%
+    mutate(ave_weather = ((weather_temperature*weights[1] + weather_wind_mph * weights[2] + as.numeric(weather_humidity) * weights[3]))) %>%
+    select(home_win, ave_weather, weather_temperature, weather_wind_mph, weather_humidity)
+  df[home_win == -1] <- 0
+}
+
 #Appends home_id and away_id to table.
 append_ids <- function(data) {
   home_ids <- c()
