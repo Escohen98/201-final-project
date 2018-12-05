@@ -21,7 +21,7 @@ weather_effect_model <- function(team, info_data) {
 }
 
 #weather_validator <- function()
-weather_effect_model("DEN", spreadspoke)
+#weather_effect_model("DEN", spreadspoke)
 
 #Graphs the model of home_win vs. weather. Dplyr is masked by GGally.
 ggpairs_model_checker <- function(info_data, weights=c(1,1,1)) {
@@ -32,7 +32,7 @@ ggpairs_model_checker <- function(info_data, weights=c(1,1,1)) {
   ggpairs(data=df, upper=list(df$home_win), lower=list(df$ave_weather, df$weather_temperature*weights[1], df$weather_wind_mph*weights[2], as.numeric(df$weather_humidity)*weights[3]), title="Home Win vs. Weather", cardinality_threshold = 100)
 }
 
-ggpairs_model_checker(spreadspoke, c(3, 2, 0.5))
+#ggpairs_model_checker(spreadspoke, c(3, 2, 0.5))
 
 individual_model_checker <- function(info_data) {
   df <- prepare_for_model(info_data)
@@ -50,8 +50,8 @@ cat(get_likelihood("DEN"))
 #humidity corr: -0.00712
 #temperature corr: -0.0344
 #wind_mph corr: .0247
-individual_model_checker("weather_temperature", spreadspoke)
-individual_model_checker("spreadspoke$weather_humidity", spreadspoke)
-individual_model_checker("spreadspoke$weather_wind_mph", spreadspoke)
+#individual_model_checker("weather_temperature", spreadspoke)
+#individual_model_checker("spreadspoke$weather_humidity", spreadspoke)
+#individual_model_checker("spreadspoke$weather_wind_mph", spreadspoke)
 
 #weather_effect_model("DEN", spreadspoke)
