@@ -300,24 +300,24 @@ server <- function(input, output) {
     for (i in 1:nrow(data)) {
       if (homeTeam == paste(data[i, "team_home"])) {
         if (as.numeric(data[i, "weather_temperature"]) >= 50) {
-          if (as.numeric(data[i, "score_home"]) > as.numeric(data[i, "score_away"])) {
+          if (data[i, "score_home"] > data[i, "score_away"]) {
             warmRecord <- warmRecord + 1
           }
           numWarmGames <- numWarmGames + 1
         } else {
-          if (as.numeric(data[i, "score_home"]) > as.numeric(data[i, "score_away"])) {
+          if (data[i, "score_home"] > data[i, "score_away"]) {
             coldRecord <- coldRecord + 1
           }
           numColdGames <- numColdGames + 1
         }
       } else {
         if (as.numeric(data[i, "weather_temperature"]) >= 50) {
-          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
+          if (data[i, "score_home"] < data[i, "score_away"]) {
             warmRecord <- warmRecord + 1
           }
           numWarmGames <- numWarmGames + 1
         } else {
-          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
+          if (data[i, "score_home"] < data[i, "score_away"]) {
             coldRecord <- coldRecord + 1
           }
           numColdGames <- numColdGames + 1 
@@ -335,6 +335,7 @@ server <- function(input, output) {
     
     home_team_weather <- data_frame("Temperature" = c("Cold Weather", "Warm Weather"),
                                     "Temp_Based_Record" = c(coldRecord, warmRecord))
+    home_team_weather
   })
   
   ## Creates a data frame containing the win rate of the away team during cold and warm games
@@ -367,12 +368,12 @@ server <- function(input, output) {
         }
       } else {
         if (as.numeric(data[i, "weather_temperature"]) >= 50) {
-          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
+          if (data[i, "score_home"] <data[i, "score_away"]) {
             warmRecord <- warmRecord + 1
           }
           numWarmGames <- numWarmGames + 1
         } else {
-          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
+          if (data[i, "score_home"] < data[i, "score_away"]) {
             coldRecord <- coldRecord + 1
           }
           numColdGames <- numColdGames + 1 
@@ -390,6 +391,7 @@ server <- function(input, output) {
     
     away_team_weather <- data_frame("Temperature" = c("Cold Weather", "Warm Weather"),
                                     "Temp_Based_Record" = c(coldRecord, warmRecord))
+    away_team_weather
   })
   
   ## Creates a data frame containing the win rate of the home and away team during the given weather
@@ -571,8 +573,12 @@ server <- function(input, output) {
     
     chartTitle <- paste("Win Rate of the Teams in Cold and Warm Weather")
     
-    plot_ly(data, x = ~Temperature, y = ~Home_Team, type = 'bar', name = homeTeam) %>% 
-      add_trace(y = ~Away_Team, name = awayTeam) %>%
+    plot_ly(data, x = ~Temperature, y = ~Home_Team, type = 'bar', name = homeTeam,
+            marker = list(color = 'rgb(58,200,225)',
+                          line = list(color = 'rgb(8,48,107)'))) %>% 
+      add_trace(y = ~Away_Team, name = awayTeam,
+                marker = list(color = 'rgb(158,202,225)',
+                              line = list(color = 'rgb(8,48,107)'))) %>%
       layout(title = chartTitle, yaxis = list(title = 'Win Rate'), barmode = 'group')
   })
   
