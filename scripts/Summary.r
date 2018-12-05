@@ -94,7 +94,7 @@ append_ids <- function(data) {
 id_to_name <- function(id) {
   team <- select(teams, team_name_short, team_id, team_id_pfr) %>%
     filter((as.character(team_id) == as.character(id)) || (as.character(team_id_pfr) == as.character(id)))
-  team$team_name_short[1]
+  team$team_name_short
 }
 
 #Takes a team name and returns the given team id (not the team_id_pfr).
