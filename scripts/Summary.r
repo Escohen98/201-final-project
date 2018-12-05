@@ -1,6 +1,6 @@
 library(dplyr)
 
-#spreadspoke <- read.csv(file_path, stringsAsFactors = FALSE)
+#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
@@ -26,24 +26,86 @@ get_team_result <- function(data) {
   winner
 }
 
+#Given the home team id, computes rank of weather.
+#Key: 
+## Rank | Stadium
+##  1       dome
+##  2       warm
+##  3     moderate
+##  4       cold
 stadium_to_rank <- function(team) {
-  condensed_stadiums <- select(stadiums, stadium=stadium_name, 
-                               weather=stadium_weather_type) %>%
-    filter(!is.na(weather))
-  for(team in condensed_stadiums) {}
+  NFL <- get_NFL()
+  stadiums <- select(get_stadiums(), stadium=stadium_name, 
+                               weather=stadium_weather_type)
+  #Safest bet. Most likely will not affect data.
+  #stadiums$stadium_weather_type[is.na(stadium$stadium_weather_type)] <- paste("dome") 
+  for(t in NFL$Team) {
+    t <- shorten_name(t)
+  }
   team_name <- id_to_name(team)
+  names(stadiums)[1] <- paste("Stadium")
+  grouped <- right_join(stadiums, NFL, by="Stadium")
+  temp <- grouped[grouped$Team == team, "stadium_weather_type"]
+  if(temp == "cold") {
+    temp <- 4
+  } else if(temp == "moderate") {
+    temp <- 3
+  } else if(temp == "warm") {
+    temp <- 2
+  } else {
+    temp <- 1
+  }
   
+  temp
 }
 
 #Appends and returns a dataframe containing the given data and a winner_id column 
 #that has the team_id of the team that won each game. 
 #Sets value to NA if game has yet to be played. 
 #Very slow.
+append_winner <- function(data) {
+  winner <- c()
+  for(row in 1:nrow(data)) {
+    if(is.na(data[row,]$score_home)) {
+      winner <- c(winner, data[row,]$score_home) 
+    } else {
+      winner <- c(winner, get_team_result(data[row,]))
+    }
+  }
+  new_data <- mutate(data, winner_id=winner)
+}
+
+#Creates and returns a new dataframe containing the columns home_win and ave_weather.
+#@param info_data - the dataframe containing the necessary data
+#@param weights - A list of values to be multiplied for each weather feature 
+#                 format: (temperature, wind, humidity).
+#@return df - dataframe containing the columns home_win and ave_weather
+#@column home_win - Contains a 1 if the home team won, otherwise 0. Ties are omitted.
+#@column ave_weather - Total value of all weather components multipled by their weights. 
+prepare_for_model <- function(info_data, weights=c(1,1,1)) {
+  suppressWarnings(info_data$weather_temperature <- as.numeric(info_data$weather_temperature))
+  df <- filter(info_data, !(is.na(weather_temperature) | is.na(weather_wind_mph) | is.na(weather_humidity) | (score_home == score_away))) %>%
+    mutate(away_win = ((score_away-score_home)/abs(score_home-score_away))) %>%
+    mutate(ave_weather = ((weather_temperature*weights[1] + weather_wind_mph * weights[2] + as.numeric(weather_humidity) * weights[3]))) %>%
+    select(away_win, ave_weather, weather_temperature, weather_wind_mph, weather_humidity) %>%
+    filter(!is.na(away_win))
+  condition <- df$away_win == -1
+  df[condition,1] <-  0
+  df
+}
+
+#Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+#54.0   116.0   134.0   132.2   149.0   192.0    3284
+#Converts data to categorical variable from 1 to 4 based on spread of weather data. 
+#1 is the highest rank (greatest temp + humidity + wind) and 4 is the least. 
+#@param min - The min row to filter from the dataframe (default=1)
+#@param max - The max row to filter from the dataframe (default=length of filtered dataframe)
 categorize_weather <- function(this_data, max=0, min=1) {
   data <- filter(this_data,!is.na(ave_weather))
   if(max == 0) {
     max <- nrow(data)
   }
+  
   data <- data[min:max,] 
   for(row in 1:(max-min+1)) {
     if((data[row, "ave_weather"] >= 0) & (data[row, "ave_weather"] < 116.0)) {

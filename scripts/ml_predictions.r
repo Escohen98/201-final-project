@@ -10,7 +10,7 @@ library(knitr)
 
 source("Summary.r")
   
-weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
+weather_effect_model <- function(team, info_data) {
   df <- categorize_weather(prepare_for_model(info_data), 1000, 1)
   head(df)
   #Step 1
@@ -19,7 +19,7 @@ weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
   #Step 2
   df$ave_weather <- factor(df$ave_weather)
   df$weather_humidity <- as.numeric(df$weather_humidity)
-  mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph + weather_humidity + ave_weather, 
+  mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph - weather_humidity + ave_weather, 
                  data=df, family="binomial")
   c(mylogit, df)
 }
@@ -31,8 +31,6 @@ visualize <- function(mylogit) {
   print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
   with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
 }
-
-#weather_effect_model("", spreadspoke)
 
 #Returns the probability a given team will win a game given the temperatures.
 get_data1 <- function(team, data) {
