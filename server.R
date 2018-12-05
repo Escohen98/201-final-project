@@ -401,18 +401,6 @@ server <- function(input, output) {
           "currently performing **")
   })
   
-  josh_data <- reactive({
-    temp <- home_and_away_teams()
-    week <- week()
-    homeTeam <- temp[2]
-    awayTeam <- temp[1]
-    data <- filter(game_data, score_home != "NA",
-                   schedule_week <= week | schedule_season < current_date,
-                   team_home == homeTeam | team_away == homeTeam,
-                   team_home == awayTeam | team_away == awayTeam)
-    data
-  })
-  
   output$winning_team <- renderText ({
     if (who_wins_calculator() !=
         "Based on our data, it's a tossup! Select tabs above for more information.") {
