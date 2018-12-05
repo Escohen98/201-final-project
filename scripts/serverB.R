@@ -46,59 +46,20 @@ server <- function(input, output) {
     home_and_away
   })
   
-  head_to_head <- reactive({
-    temp <- head_to_head_data()
-    teamNames <- home_and_away_teams()
-    homeTeamWins <- 0
-    awayTeamWins <- 0
-    
-    ## counts how many head-to-head games each team won
-    if (nrow(temp) > 0) {
-      for (i in 1:nrow(temp)) {
-        if (teamNames[2] == paste(temp[i, "team_home"])) {
-          if (temp[i, "score_home"] > temp[i, "score_away"]) {
-            homeTeamWins <- homeTeamWins + 1
-          } else if (temp[i, "score_home"] < temp[i, "score_away"]) {
-            awayTeamWins <- awayTeamWins + 1
-          } else {
-            homeTeamWins <- homeTeamWins + 0.5
-            awayTeamWins <- awayTeamWins + 0.5
-          }
-        } else {
-          if (temp[i, "score_home"] < temp[i, "score_away"]) {
-            homeTeamWins <- homeTeamWins + 1
-          } else if (temp[i, "score_home"] > temp[i, "score_away"]) {
-            awayTeamWins <- awayTeamWins + 1
-          } else {
-            homeTeamWins <- homeTeamWins + 0.5
-            awayTeamWins <- awayTeamWins + 0.5
-          }
-        }
-      }    
-      homeTeamWins <- homeTeamWins / nrow(temp)
-      awayTeamWins <- awayTeamWins / nrow(temp)
-    }
-    
-    
-    
-    data <- data_frame("Team_Name" = teamNames,
-                       "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
-  })
-  
-  output$head_to_head_plot <- renderPlotly({
-    teamNames <- home_and_away_teams()
-    data <- head_to_head()
-    
-    if (data[1, 2] == data[2, 2]) {
-      data[1, 2] <- .5
-      data[2, 2] <- .5
-    }
-    
-    plot_ly(data, labels = ~Team_Names, values = ~Head_to_Head_Win_Rate, type = "pie") %>% 
-      layout(title = "Head-to-Head Matchup Record",
-             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-  })
+  ## Describes the head-to-head chart
+ output$head_to_head_description <- renderText({
+   paste("This plot compares the win rate of the two teams in head-to-head",
+         "matches (i.e. games where they played each other)",
+         "over the last three years")
+ })
+ 
+ 
+ ## Describes the point differential chart
+ output$point_differential_description <- renderText({
+   paste("This plot compares the point differentials of the two teams.",
+         "Point differential is the total points scored by a team subtracted by",
+         "the total points they have allowed their opponents to score")
+ })
   
   
 }
