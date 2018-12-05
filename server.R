@@ -302,7 +302,7 @@ server <- function(input, output) {
     win_rate_chart <- win_rate_chart()
     point_differential <- point_differential()
     head_to_head <- head_to_head()
-    weather_chart <- weather_chart()[[1]]
+    #weather_chart <- weather_chart()[[1]]
     home_team_score <- 0
     away_team_score <- 0
     if (win_rate_chart[2,2] > win_rate_chart[1,2]) {
@@ -325,11 +325,11 @@ server <- function(input, output) {
     } else if (head_to_head[2,2] < head_to_head[1,2]) {
       away_team_score <- (away_team_score + convert_importance(paste(input$head_to_head_importance)))
     }
-    if (weather_chart[2,2] > weather_chart[1,2]) {
-      home_team_score <- (home_team_score + convert_importance(paste(input$weather_importance)))
-    } else if (weather_chart[2,2] < weather_chart[1,2]){
-      away_team_score <- (away_team_score + convert_importance(paste(input$weather_importance)))
-    }
+    #if (weather_chart[2,2] > weather_chart[1,2]) {
+    #  home_team_score <- (home_team_score + convert_importance(paste(input$weather_importance)))
+    #} else if (weather_chart[2,2] < weather_chart[1,2]){
+    #  away_team_score <- (away_team_score + convert_importance(paste(input$weather_importance)))
+    #}
     this_team_wins <- ""
     if (home_team_score > away_team_score) {
       this_team_wins <- paste(win_rate_chart[2,1])
@@ -402,7 +402,8 @@ server <- function(input, output) {
     teams <- home_and_away_teams()
     probabilities <- weather_chart()
     home_chart <- probabilities[2]
-    rank <- home_chart[home_chart$rankP == probabilities[1]$Weather_Win_Probibility[1], "ave_weather"] #Gets the rank from the data
+    rank <- home_chart[home_chart$rankP == probabilities[1]$Weather_Win_Probibility[1],
+                       "ave_weather"] #Gets the rank from the data
     rank_desc <- c("Warm", "Moderate", "Dome", "Cold")
     probabilities[2]$ave_weather <- rank_desc
     probabilities[3]$ave_weather <- rank_desc
