@@ -409,8 +409,8 @@ server <- function(input, output) {
     probabilities[3]$ave_weather <- rank_desc
     home <- data.frame(c(probabilities[2]$ave_weather, probabilities[2]$rankP))
     away <- data.frame(c(probabilities[3]$ave_weather, probabilities[3]$rankP))
-    names(home) <- c(print("Rank"), print("rankP_home"))
-    names(away) <- c(print("Rank"), print("rankP_home"))
+    names(home) <- c("Rank", "rankP_home")
+    names(away) <- c("Rank", "rankP_home")
     rankPs <- full_join(home, away, by="rank")
     
     #Set Game Rank to Custom Color
