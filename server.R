@@ -361,7 +361,7 @@ server <- function(input, output) {
   })
   
   ## plots the point differentials of the two teams
-  output$point_differential_chart <- renderPlot({
+  output$point_differential_chart <- renderPlotly({
     point_differential <- point_differential()
     
     ## formatting title
@@ -370,9 +370,16 @@ server <- function(input, output) {
                         point_differential[2, "Team_Name"])
     
     ## plotting data
-    ggplot(data = point_differential,
-           aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
-      geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
+    plot_ly(point_differential, x = ~Team_Name, y = ~Point_Differential, type = "bar", 
+            marker = list(color = c("rgba(118,152,179,1)", "rgba(48,50,61,1)"),
+                          line = list(color = "rgb(8,48,107)", width = 1.5))) %>%
+      layout(title = chartTitle,
+             xaxis = list(title = "Team Name"),
+             yaxis = list(title = "Point Differential"))
+    
+    # ggplot(data = point_differential,
+    #        aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
+    #   geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
   })
   
   
