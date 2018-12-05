@@ -34,13 +34,14 @@ weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
   df$weather_humidity <- as.numeric(df$weather_humidity)
   mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph + weather_humidity + ave_weather, 
                  data=df, family="binomial")
+  c(mylogit, df)
+}
+
+visualize <- function(mylogit) {
   summary(mylogit)
   #Chi-Squared test (Step 3)
   print(wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 5:7))
   print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
-  
-  #Step 4
-  
   with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
 }
 
@@ -50,16 +51,21 @@ weather_effect_model("", spreadspoke)
 weather_effect_model("DEN", spreadspoke)
 
 #Returns the probability a given team will win a game given the temperatures.
-get_data1 <- function(mylogit, df) {
+get_data1 <- function(team, data) {
+  model <- weather_effect_model(team, data)
+  mylogit <- model[1]
+  df <- model[2]
   newdata1 <- with(df, data.frame(weather_temperature = mean(weather_temperature), 
                                   weather_humidity = mean(weather_humidity), 
                                   weather_wind_mph = mean(weather_wind_mph), ave_weather = factor(1:4)))
   newdata1$rankP <- predict(mylogit, newdata = newdata1, type = "response")
-  newdata1
+  c(model, newdata1)
 }
 
 #Returns a comparison showing the impact of the given choice has on the result. 
-get_data2 <- function(mylogit, df, newdata1, choice) {
+get_data2 <- function(model, choice) {
+  mylogit <- model[1]
+  df <- model[2]
   coeffs <- c(df$weather_temperature, df$weather_humidity, df$weather_wind_mph)
   the_choice = coeffs[choice]
   coeffs <- coeffs[!coeffs[choice]]
@@ -72,7 +78,12 @@ get_data2 <- function(mylogit, df, newdata1, choice) {
 #except we are also going to ask for standard errors so we can plot a confidence interval. 
 #We get the estimates on the link scale and back transform both the predicted values and 
 #confidence limits into probabilities."
-get_data3 <- function(mylogit, df, newdata2) {
+get_data3 <- function(model, choice) {
+  model2 <- get_data2(model, choice)
+  mylogit <- model[1]
+  df <- model[2]
+  newdata2 <- model2[3]
+  
   newdata3 <- cbind(newdata2, predict(mylogit, newdata = newdata2, type = "link",
                                       se = TRUE))
   newdata3 <- within(newdata3, {
@@ -82,6 +93,13 @@ get_data3 <- function(mylogit, df, newdata2) {
   })
   
 }
+
+plot_data3 <- function(newdata3) {
+  ggplot(newdata3, aes(x = gre, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
+                                      ymax = UL, fill = rank), alpha = 0.2) + geom_line(aes(colour = rank),
+                                      size = 1)
+}
+
 #Graphs the model of away_win vs. weather. Dplyr is masked by GGally.
 ggpairs_model_checker <- function(info_data, weights=c(1,1,1)) {
   
