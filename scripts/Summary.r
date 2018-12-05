@@ -9,11 +9,9 @@ library(dplyr)
 #Returns rows of only home if stadium == home, only away if stadium == away, 
 #otherwise returns both.
 #Switches home and away teams if stadium = 1 (home team). 
-get_team_data <- function(team, df, stadium="") {
+get_team_data <- function(team_name, df, stadium="") {
   team_data <- df
-  if(nchar(team) != 3) {
-    name_to_id(team)[1]
-  }
+  team <- is_id(team_name)
   if(stadium == 1) {
       team_data <- mutate(team_data, team_home = df$team_away, team_away = df$team_home, home_id = df$away_id, away_id = df$home_id, 
                           score_home = df$score_away, score_away = df$score_home) %>%
@@ -172,6 +170,16 @@ name_to_id <- function(name) {
   team <- select(get_teams, team_name_short, team_id) %>%
     filter(as.character(team_name_short) == as.character(shorten_name(name)))
   team$team_id
+}
+
+#Checks if the given character is of length 3 (team id). If true, returns team, otherwise converts team to 3 characters and returns result.
+is_id <- function(team_var) {
+  team <- team_var
+  if(nchar(team) != 3) {
+    team <- name_to_id(team)[1]
+  }
+  
+  team
 }
 
 #Returns the number of wins a team has in the given year up until the given week. Returns a numeric result.

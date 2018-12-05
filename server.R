@@ -72,11 +72,11 @@ server <- function(input, output) {
     temp <- home_and_away_teams()
     week <- week()
     homeTeam <- temp[2]
-    data <- filter(game_data, score_home != "NA",
+    df <- filter(game_data, score_home != "NA",
                    schedule_week <= week | schedule_season < current_date,
                    team_home == homeTeam | team_away == homeTeam)
-    data <- head(data, 9)
-    data
+    df <- head(df, 9)
+    df
   })
   
   ## Creates a data frame of the last nine HOME GAMES of the home team
@@ -96,11 +96,11 @@ server <- function(input, output) {
     temp <- home_and_away_teams()
     week <- week()
     awayTeam <- temp[1]
-    data <- filter(game_data, score_home != "NA",
+    df <- filter(game_data, score_home != "NA",
                    schedule_week <= week | schedule_season < current_date,
                    team_home == awayTeam | team_away == awayTeam)
-    data <- head(data, 9)
-    data
+    df <- head(df, 9)
+    df
   })
   
   ## Creates a data frame of the last nine AWAY GAMES of the away team
@@ -121,11 +121,11 @@ server <- function(input, output) {
     week <- week()
     homeTeam <- temp[2]
     awayTeam <- temp[1]
-    data <- filter(game_data, score_home != "NA",
+    df <- filter(game_data, score_home != "NA",
                    schedule_week <= week | schedule_season < current_date,
                    team_home == homeTeam | team_away == homeTeam)
-    data <- filter(data, team_home == awayTeam | team_away == awayTeam)
-    data
+    df <- filter(df, team_home == awayTeam | team_away == awayTeam)
+    df
   })
   
   ## Creates a chart that holds the win rate for the home team and the away team 
@@ -233,11 +233,11 @@ server <- function(input, output) {
     }
     
     ## putting differentials in a data table
-    data <- data_frame("Team_Name" = team_names,
+    df <- data_frame("Team_Name" = team_names,
                        "Point_Differential" =
                          c(away_point_differential, home_point_differential))
     
-    data
+    df
   })
   
   ## This creates a chart that compares the head-to-head win rates of the two teams
@@ -276,15 +276,23 @@ server <- function(input, output) {
     
 
     
-    data <- data_frame("Team_Names" = teamNames,
+    df <- data_frame("Team_Names" = teamNames,
                        "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
   })
   
-  #Creates a chart and compares likelyhood of winning based on weather.
+  #Uses ML algorithm to determine the win probability of each team based on the climate. 
+  #Returns a dataframe containing the probabilities of each team.
   weather_chart <- reactive({
     teams <- home_and_away_teams()
     home_team <- get_data1(weather_effect_model(teams[1], TRUE, get_scores()))
     away_team <- get_data1(weather_effect_model(teams[1], FALSE, get_scores()))
+    rank <- stadium_to_rank(is_id(teams[1]))
+    home_win_prob <- home_team[rank, "rankP"]
+    away_win_prob <- away_team[rank, "rankP"]
+    
+    df <- data_frame("Team_Names" = teams, 
+                     "Weather_Win_Probability" = c(home_win_prob, away_win_prob))
+    
   })
   
   #################    This calculates who is supposed to win the game   ##############
@@ -316,11 +324,11 @@ server <- function(input, output) {
     } else if (head_to_head[2,2] < head_to_head[1,2]) {
       away_team_score <- (away_team_score + convert_importance(paste(input$head_to_head_importance)))
     }
-    #if (weather_chart[2,2] > weather_chart[1,2]) {
-    #  home_team_score <- (home_team_score + convert_importance(paste(input$weather_importance)))
-    #} else if (weather_chart[2,2] < weather_chart[1,2]){
-    #  away_team_score <- (away_team_score + convert_importance(paste(input$weather_importance)))
-    #}
+    if (weather_chart[2,2] > weather_chart[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(paste(input$weather_importance)))
+    } else if (weather_chart[2,2] < weather_chart[1,2]){
+      away_team_score <- (away_team_score + convert_importance(paste(input$weather_importance)))
+    }
     this_team_wins <- ""
     if (home_team_score > away_team_score) {
       this_team_wins <- paste(win_rate_chart[2,1])
@@ -419,14 +427,14 @@ server <- function(input, output) {
   ## Makes a chart comparing head-to-head results
   output$head_to_head_plot <- renderPlotly({
     teamNames <- home_and_away_teams()
-    data <- head_to_head()
+    df <- head_to_head()
     
-    if (data[1, 2] == data[2, 2]) {
-      data[1, 2] <- .5
-      data[2, 2] <- .5
+    if (df[1, 2] == df[2, 2]) {
+      df[1, 2] <- .5
+      df[2, 2] <- .5
     }
     
-    plot_ly(data, labels = ~Team_Names, values = ~Head_to_Head_Win_Rate, type = "pie") %>% 
+    plot_ly(df, labels = ~Team_Names, values = ~Head_to_Head_Win_Rate, type = "pie") %>% 
       layout(title = "Head-to-Head Matchup Record",
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
