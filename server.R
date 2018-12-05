@@ -299,25 +299,25 @@ server <- function(input, output) {
     ## Counting the number of cold and warm games played, and the results of the games
     for (i in 1:nrow(data)) {
       if (homeTeam == paste(data[i, "team_home"])) {
-        if (data[i, "weather_temperature"] >= 50) {
-          if (data[i, "score_home"] > data[i, "score_away"]) {
+        if (as.numeric(data[i, "weather_temperature"]) >= 50) {
+          if (as.numeric(data[i, "score_home"]) > as.numeric(data[i, "score_away"])) {
             warmRecord <- warmRecord + 1
           }
           numWarmGames <- numWarmGames + 1
         } else {
-          if (data[i, "score_home"] > data[i, "score_away"]) {
+          if (as.numeric(data[i, "score_home"]) > as.numeric(data[i, "score_away"])) {
             coldRecord <- coldRecord + 1
           }
           numColdGames <- numColdGames + 1
         }
       } else {
-        if (data[i, "weather_temperature"] >= 50) {
-          if (data[i, "score_home"] < data[i, "score_away"]) {
+        if (as.numeric(data[i, "weather_temperature"]) >= 50) {
+          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
             warmRecord <- warmRecord + 1
           }
           numWarmGames <- numWarmGames + 1
         } else {
-          if (data[i, "score_home"] < data[i, "score_away"]) {
+          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
             coldRecord <- coldRecord + 1
           }
           numColdGames <- numColdGames + 1 
@@ -354,7 +354,7 @@ server <- function(input, output) {
     ## Counting the number of cold and warm games played, and the results of the games
     for (i in 1:nrow(data)) {
       if (awayTeam == paste(data[i, "team_home"])) {
-        if (data[i, "weather_temperature"] >= 50) {
+        if (as.numeric(data[i, "weather_temperature"]) >= 50) {
           if (data[i, "score_home"] > data[i, "score_away"]) {
             warmRecord <- warmRecord + 1
           }
@@ -366,13 +366,13 @@ server <- function(input, output) {
           numColdGames <- numColdGames + 1
         }
       } else {
-        if (data[i, "weather_temperature"] >= 50) {
-          if (data[i, "score_home"] < data[i, "score_away"]) {
+        if (as.numeric(data[i, "weather_temperature"]) >= 50) {
+          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
             warmRecord <- warmRecord + 1
           }
           numWarmGames <- numWarmGames + 1
         } else {
-          if (data[i, "score_home"] < data[i, "score_away"]) {
+          if (as.numeric(data[i, "score_home"]) < as.numeric(data[i, "score_away"])) {
             coldRecord <- coldRecord + 1
           }
           numColdGames <- numColdGames + 1 
