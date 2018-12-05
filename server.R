@@ -285,12 +285,12 @@ server <- function(input, output) {
   #the ML algorithm output for each team.
   weather_chart <- reactive({
     teams <- home_and_away_teams()
-    home_team <- get_data1(weather_effect_model(teams[1], TRUE, get_scores()))
-    away_team <- get_data1(weather_effect_model(teams[1], FALSE, get_scores()))
-    rank <- stadium_to_rank(is_id(teams[1]))
+    home_team <- get_data1(weather_effect_model(teams[2], TRUE, get_scores()))
+    away_team <- get_data1(weather_effect_model(teams[2], FALSE, get_scores()))
+    rank <- stadium_to_rank(shorten_name(teams[2]))
     home_win_prob <- home_team[rank, "rankP"]
     away_win_prob <- away_team[rank, "rankP"]
-    
+  
     df <- data_frame("Team_Names" = teams, 
                      "Weather_Win_Probability" = c(home_win_prob, away_win_prob))
     all <- list(df, home_team, away_team)
@@ -401,32 +401,36 @@ server <- function(input, output) {
   output$weather_chart <- renderPlotly({
     teams <- home_and_away_teams()
     probabilities <- weather_chart()
-    home_chart <- probabilities[2]
-    rank <- home_chart[home_chart$rankP == probabilities[1]$Weather_Win_Probibility[1],
-                       "ave_weather"] #Gets the rank from the data
+    df <- probabilities[[1]]
+    home_chart <- probabilities[[2]]
+    away_chart <- probabilities[[3]]
+    home_percent <- df$Weather_Win_Probibility[2]
+    teams <- home_and_away_teams()
+    rank <- stadium_to_rank(shorten_name(teams[2])) #Gets the rank from the data
+    print(rank)
     rank_desc <- c("Warm", "Moderate", "Dome", "Cold")
-    probabilities[2]$ave_weather <- rank_desc
-    probabilities[3]$ave_weather <- rank_desc
-    home <- data.frame(c(probabilities[2]$ave_weather, probabilities[2]$rankP))
-    away <- data.frame(c(probabilities[3]$ave_weather, probabilities[3]$rankP))
-    names(home) <- c("Rank", "rankP_home")
-    names(away) <- c("Rank", "rankP_home")
-    rankPs <- full_join(home, away, by="rank")
-    
+    home_chart$ave_weather <- rank_desc
+    away_chart$ave_weather <- rank_desc
+
+    home <- select(home_chart, "Rank"=ave_weather, "rankP_home"=rankP)
+    away <- select(away_chart, "Rank"=ave_weather, "rankP_away"=rankP)
+    rankPs <- full_join(home, away, by="Rank")
     #Set Game Rank to Custom Color
     home_color <- 'rgba(184, 184, 184, 1)'
     home_special <- 'rgba(222, 45, 38, 0.8)'
     home_marker <- c(home_color, home_color, home_color, home_color, home_color, home_color)
-    home_marker[rank] <- home_special
+    
+    print(paste(rank, typeof(rank)))
+    home_marker[as.numeric(rank)] <- home_special
     
     away_color <- 'rgba(204, 204, 204, 1)'
     away_special <- 'rgba(38, 45, 222, 0.8'
     away_marker <- c(away_color, away_color, away_color, away_color, away_color, away_color)
     away_marker[rank] <- away_special
     #Some code below is taken from https://plot.ly/r/bar-charts/#customizing-individual-bar-colors
-    plot_ly(df, x = ~Rank, y = ~rankP_home, type='bar', name='Home Team',
+    plot_ly(rankPs, x = ~Rank, y = ~rankP_home, type='bar', name=teams[2],
             marker = list(color = home_marker)) %>%
-      add_trace(y = ~rankP_away, name='Away Team', marker = list(color = away_marker)) %>%
+      add_trace(y = ~rankP_away, name=teams[1], marker = list(color = away_marker)) %>%
       layout(title = "Win Probability vs. Weather Conditions",
              yaxis = list(title='Win Probability'), barmode='group', 
              legend = list(x = 0, y = 1, bgcolor = 'rgba(255, 255, 255, 0)', bordercolor = 'rgba(255, 255, 255, 0)'))

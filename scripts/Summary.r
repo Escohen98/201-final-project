@@ -56,13 +56,12 @@ stadium_to_rank <- function(team) {
   }
   #team_name <- id_to_name(team)[1]
   names(stadiums)[1] <- paste("Stadium")
-  grouped <- right_join(stadiums, NFL, by="Stadium")
-  for(row in 1:nrow(grouped)) {
-    grouped$Team[row] <- shorten_name(grouped$Team[row])
+  for(row in 1:nrow(NFL)) {
+    NFL$Team[row] <- shorten_name(NFL$Team[row])
   }
-  print(grouped$Team)
-  print(team)
-  temp <- grouped[grouped$Team == team, "stadium_weather_type"]
+  field <- NFL[NFL$Team == team, "Stadium"]
+  print(field)
+  temp <- filter(stadiums, Stadium == field)["weather"]
   if(temp == "cold") {
     temp <- 4
   } else if(temp == "moderate") {
@@ -241,8 +240,9 @@ get_scores <- function() {
 #Also updates Chargers and Rams stadiums
 get_NFL <- function() {
   NFL <- read.csv(get_file_path("nfl.csv"), stringsAsFactors = FALSE)
-  NFL[8,2] <- "Los Angeles Memorial Colisium"
-  NFL[24,2] <- "StubHub Center"
+  NFL[8, 2] <- "Los Angeles Memorial Colisium"
+  NFL[22,2] <- "Oakland Colliseum"
+  NFL[23,2] <- "StubHub Center"
   NFL
 }
 
