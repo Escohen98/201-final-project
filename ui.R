@@ -25,9 +25,6 @@ shinyUI(fluidPage(
       selectInput("game", label = h3("Game Select"),
                   choices = list_of_games),
       
-      radioButtons("temp", label = ("What Should the Weather For the Game Be?"),
-                   choices = c("Above 50 Degrees", "Below 50 Degrees")),
-      
       radioButtons("win_rate_importance", label =
                      ("How Important is Overall Win Rate of the Teams?"),
                    choices = buttons, selected = "Very Important"),
@@ -40,10 +37,7 @@ shinyUI(fluidPage(
                    choices = buttons, selected = "Fairly Important"),
       radioButtons("point_differential_importance", label =
                      ("How Important is the Point Differential of the Teams?"),
-                   choices = buttons, selected = "Very Important"),
-      radioButtons("weather_importance", label =
-                     ("How Important is the Play of Teams in Weather Similar to the Upcoming Game?"),
-                   choices = buttons, selected = "Fairly Important")
+                   choices = buttons, selected = "Very Important")
     ),
   
   mainPanel(
@@ -61,9 +55,9 @@ shinyUI(fluidPage(
                          textOutput("point_differential_description")),
                 tabPanel("Head-to-Head", plotlyOutput("head_to_head_plot"),
                          textOutput("head_to_head_description")),
-                tabPanel("Weather Problem", textOutput("weather_problem")),
-                tabPanel("Weather", plotlyOutput("weather_chart")),
+                tabPanel("Weather", plotlyOutput("weather_chart"),
                          textOutput("weather_chart_description"),
+                         textOutput("weather_problem")),
                 tabPanel("About The Site", h4(textOutput("about")),
                          h5((textOutput("nine_game_mention"))))
     )
