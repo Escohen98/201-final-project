@@ -25,8 +25,8 @@ shinyUI(fluidPage(
       selectInput("game", label = h3("Game Select"),
                   choices = list_of_games),
       
-      radioButtons("temp", label = ("What Should the Weather For the Game Be?"),
-                   choices = c("Above 50 Degrees", "Below 50 Degrees")),
+      #radioButtons("temp", label = ("What Should the Weather For the Game Be?"),
+      #             choices = c("Above 50 Degrees", "Below 50 Degrees")),
       
       radioButtons("win_rate_importance", label =
                      ("How Important is Overall Win Rate of the Teams to You?"),
@@ -40,10 +40,10 @@ shinyUI(fluidPage(
                    choices = buttons, selected = "Fairly Important"),
       radioButtons("point_differential_importance", label =
                      ("How Important is the Point Differential of the Teams to You?"),
-                   choices = buttons, selected = "Very Important"),
-      radioButtons("weather_importance", label =
-                     ("How Important is the Play of Teams in Weather Similar to the Upcoming Game to You?"),
-                   choices = buttons, selected = "Fairly Important")
+                   choices = buttons, selected = "Very Important")
+      #radioButtons("weather_importance", label =
+      #               ("How Important is the Play of Teams in Weather Similar to the Upcoming Game to You?"),
+      #             choices = buttons, selected = "Fairly Important")
     ),
   
   mainPanel(
