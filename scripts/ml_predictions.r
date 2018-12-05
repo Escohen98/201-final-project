@@ -7,12 +7,19 @@
 library(aod)
 library(ggplot2)
 library(knitr)
-library(caret)
 
 source("Summary.r")
-  
-weather_effect_model <- function(team, info_data) {
-  df <- categorize_weather(prepare_for_model(info_data))
+
+#Machine Learning Algorithm to train and learn the model. Model has been tested prior to current. 
+#Supplied data is entire sample of played NFL games since 1966  
+#Returns a list containing the Regression results and a modified data frame. 
+weather_effect_model <- function(team, isHome, info_data) {
+  df <- ""
+  if(isHome) {
+    df <- categorize_weather(prepare_for_model(get_team_data(team, info_data, 1)))
+  } else {
+    df <- categorize_weather(prepare_for_model(get_team_data(team, info_data, 0)))
+  }
   #Step 1
   sapply(df, sd)
   #Step 2
@@ -23,31 +30,22 @@ weather_effect_model <- function(team, info_data) {
   list(mylogit, df)
 }
 
-visualize <- function(mylogit) {
-  summary(mylogit)
-  sapple(df, sd)
-  print(xtabs(~away_win + ave_weather, data=df))
-  #Chi-Squared test (Step 3)
-  print(wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 5:7))
-  print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
-  with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
-}
-
-#weather_effect_model("", spreadspoke)
-
 #Returns the probability a given team will win a game given the temperatures.
-get_data1 <- function(team, dataf) {
-  model <- weather_effect_model(team, dataf)
-  mylogit <- model[1]
-  df <- model[2]
+get_data1 <- function(model) {
+  mylogit <- model[[1]]
+  df <- model[[2]]
   newdata1 <- with(df, data.frame(weather_temperature = mean(weather_temperature), 
                                   weather_humidity = mean(weather_humidity), 
                                   weather_wind_mph = mean(weather_wind_mph), ave_weather = factor(1:4)))
   newdata1$rankP <- predict(mylogit, newdata = newdata1, type = "response")
-  c(model, newdata1)
+  newdata1
 }
 
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Manual Manipulation and Visualization
+
 #Returns a comparison showing the impact of the given choice has on the result. 
+##Used to compare significance of weather features. Must manually change desired feature.
 #choice must be the following:
 ## Key | Value
 ##  1  | weather_temperature
@@ -73,7 +71,8 @@ get_data2 <- function(model) {
 ##  1  | weather_temperature
 ##  2  | weather_humidity
 ##  3  | weather_wind_mph
-get_data3 <- function(model) {
+get_data3 <- function(team, isHome, data) {
+  model <- weather_effect_model(team, isHome, data)
   model2 <- get_data2(model)
   mylogit <- model[[1]]
   df <- model[[2]]
@@ -89,11 +88,10 @@ get_data3 <- function(model) {
   
 }
 
-plot_data3 <- function(newdata3) {
+#Plots newdata3. Only useful for visually checking significance of weather features.
+plot_data3 <- function(team, isHome, data) {
+  newdata3 <- get_data3(team, isHome, data)
   ggplot(newdata3, aes(x = weather_wind_mph, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
                                       ymax = UL, fill = ave_weather), alpha = 0.2) + geom_line(aes(colour = ave_weather),
                                       size = 1)
 }
-
-demo <- weather_effect_model("", spreadspoke)
-plot_data3(get_data3(demo))

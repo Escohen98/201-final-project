@@ -3,14 +3,17 @@ library(dplyr)
 #Gets and returns all rows with given team_name or team_id from data.
 #Returns rows of only home if stadium == home, only away if stadium == away, 
 #otherwise returns both.
+#Switches home and away teams if stadium = 1 (home team). 
 get_team_data <- function(team, df, stadium="") {
   team_data <- ""
   if(nchar(team) != 3) {
     name_to_id(team)[1]
   }
-  if(stadium == "home") {
-    team_data <- filter(df, home_id == team)
-  } else if(stadium == "away") {
+  if(stadium = 1) {
+    team_data <- filter(df, home_id == team) %>%
+      mutate(team_home = team_away, team_away = team_home, home_id = away_id, away_id = home_id, 
+             score_home = score_away, score_away = score_home)
+  } else if(stadium == 0) {
     team_data <- filter(df, away_id == team)
   } else {
   team_data <- filter(df, (home_id == team) | (away_id == team))
@@ -72,15 +75,15 @@ append_winner <- function(df) {
   new_data <- mutate(df, winner_id=winner)
 }
 
-#Creates and returns a new dataframe containing the columns home_win and ave_weather.
+#Creates and returns a new dataframe containing the columns away_win and ave_weather.
 #@param info_data - the dataframe containing the necessary data
 #@param weights - A list of values to be multiplied for each weather feature 
 #                 format: (temperature, wind, humidity).
 #@return df - dataframe containing the columns home_win and ave_weather
-#@column home_win - Contains a 1 if the home team won, otherwise 0. Ties are omitted.
+#@column home_win - Contains a 1 if the away team won, otherwise 0. Ties are omitted.
 #@column ave_weather - Total value of all weather components multipled by their weights. 
 prepare_for_model <- function(info_data, weights=c(1,1,1)) {
-  suppressWarnings(info_data$weather_temperature <- as.numeric(info_data$weather_temperature))
+  info_data$weather_temperature <- as.numeric(info_data$weather_temperature)
   df <- filter(info_data, !(is.na(weather_temperature) | is.na(weather_wind_mph) | is.na(weather_humidity) | (score_home == score_away))) %>%
     mutate(away_win = ((score_away-score_home)/abs(score_home-score_away))) %>%
     mutate(ave_weather = ((weather_temperature*weights[1] + weather_wind_mph * weights[2] + as.numeric(weather_humidity) * weights[3]))) %>%
