@@ -1,33 +1,33 @@
-Team,Stadium,Capacity,City,Population,Conference,#
-Dallas Cowboys,Cowboys Stadium,"80,000","Arlington, TX","1,197,816",NFC East,1
-New York Giants,New Meadowlands Stadium,"82,500","East Rutherford, NJ","8,175,133",NFC East,1
-Philadelphia Eagles,Lincoln Financial Field,"67,600","Philadelphia, PA","1,526,006",NFC East,1
-Washington Redskins,Fed Ex Field,"91,700","Landover, MD","601,723",NFC East,1
-Arizona Cardinals,University of Pheonix Stadium,"63,400","Glendale, AZ","226,721",NFC West,14
-San Francisco 49ers,Candlestick Park,"69,700","San Francisco, CA","805,235",NFC West,14
-Seattle Seahawks,Century Link Field,"67,000","Seattle, WA","608,660",NFC West,14
-St. Louis Rams,Edward Jones Dome,"66,000","St. Louis, MO","319,294",NFC West,14
-Chicago Bears,Soldier Field,"61,500","Chicago, IL","2,695,598",NFC North,25
-Detroit Lions,Ford Field,"64,500","Detroit, MI","713,777",NFC North,25
-Green Bay Packers,Lambeau Field,"73,000","Green Bay, WI","104,057",NFC North,25
-Minnesota Vikings,Metrodome,"64,000","Minneapolis, MN","382,578",NFC North,25
-Atlanta Falcons,Georgia Dome,"71,250","Atlanta, GA","420,003",NFC South,38
-Carolina Panthers,Bank of America Stadium,"73,800","Charolette, NC","731,424",NFC South,38
-New Orleans Saints,Superdome,"65,000","New Orleans, LA","343,829",NFC South,38
-Tampa Bay Buccaneers,Raymond Jones Stadium,65900,"Tampa, FL","335,709",NFC South,38
-Buffalo Bills,Ralph Wilson Stadium,"73,000","Orchard Park, NY","261,310",AFC East,50
-Miami Dolphins,Sun Life Stadium,"75,000","Miami, FL","399,457",AFC East,50
-New England Patriots,Gillette Stadium,"68,800","Foxborough, MA","16,865",AFC East,50
-New York Jets,New Meadowlands Stadium,"82,500","East Rutherford, NJ","8,175,133",AFC East,50
-Denver Broncos,Invesco Field at Mile High,"76,100","Denver, CO","600,158",AFC West,63
-Kansas City Chiefs,Arrowhead Stadium,"76,800","Kansas City, MO","459,787",AFC West,63
-Oakland Raiders,O.co Coliseum,"63,000","Oakland, CA","390,724",AFC West,63
-San Diego Chargers,Qualcomm Stadium,"70,000","San Diego, CA","1,307,402",AFC West,63
-Baltimore Ravens,M&T Bank Stadium,"71,000","Baltimore, MD","620,961",AFC North,75
-Cincinnati Bengals,Paul Brown Stadium,"65,500","Cincinnati, OH","296,943",AFC North,75
-Cleveland Browns,Cleveland Browns Stadium,"73,200","Cleveldand, OH","396,815",AFC North,75
-Pittsburgh Steelers,Heinze Field,"65,000","Pittsburgh, PA","305,704",AFC North,75
-Houston Texans,Reliant Stadium,"71,000","Houston, TX","2,099,451",AFC South,88
-Indianapolis Colts,Lucas Oil Stadium,"63,000","Indianapolis, IN","820,445",AFC South,88
-Jacksonville Jaguars,EverBank Field,"67,200","Jacksonville, FL","821,784",AFC South,88
-Tennessee Titans,LP Field,"69,100","Nashville, TN","601,222",AFC South,88
+"Team","Stadium","Capacity","City","Population","Conference","X."
+"Dallas Cowboys","Cowboys Stadium","80,000","Arlington, TX","1,197,816","NFC East",1
+"New York Giants","MetLife Stadium","82,500","East Rutherford, NJ","8,175,133","NFC East",1
+"Philadelphia Eagles","Lincoln Financial Field","67,600","Philadelphia, PA","1,526,006","NFC East",1
+"Washington Redskins","FedEx Field","91,700","Landover, MD","601,723","NFC East",1
+"Arizona Cardinals","University of Phoenix Stadium","63,400","Glendale, AZ","226,721","NFC West",14
+"San Francisco 49ers","Candlestick Park","69,700","San Francisco, CA","805,235","NFC West",14
+"Seattle Seahawks","CenturyLink Field","67,000","Seattle, WA","608,660","NFC West",14
+"St. Louis Rams","Los Angeles Memorial Coliseum","66,000","St. Louis, MO","319,294","NFC West",14
+"Chicago Bears","Soldier Field","61,500","Chicago, IL","2,695,598","NFC North",25
+"Detroit Lions","Ford Field","64,500","Detroit, MI","713,777","NFC North",25
+"Green Bay Packers","Lambeau Field","73,000","Green Bay, WI","104,057","NFC North",25
+"Minnesota Vikings","U.S. Bank Stadium","64,000","Minneapolis, MN","382,578","NFC North",25
+"Atlanta Falcons","Georgia Dome","71,250","Atlanta, GA","420,003","NFC South",38
+"Carolina Panthers","Bank of America Stadium","73,800","Charolette, NC","731,424","NFC South",38
+"New Orleans Saints","Mercedes-Benz Superdome","65,000","New Orleans, LA","343,829","NFC South",38
+"Tampa Bay Buccaneers","Raymond James Stadium","65900","Tampa, FL","335,709","NFC South",38
+"Buffalo Bills","Ralph Wilson Stadium","73,000","Orchard Park, NY","261,310","AFC East",50
+"Miami Dolphins","Sun Life Stadium","75,000","Miami, FL","399,457","AFC East",50
+"New England Patriots","Gillette Stadium","68,800","Foxborough, MA","16,865","AFC East",50
+"New York Jets","MetLife Stadium","82,500","East Rutherford, NJ","8,175,133","AFC East",50
+"Denver Broncos","Mile High Club","76,100","Denver, CO","600,158","AFC West",63
+"Kansas City Chiefs","Arrowhead Stadium","76,800","Kansas City, MO","459,787","AFC West",63
+"Oakland Raiders","Oakland Coliseum","63,000","Oakland, CA","390,724","AFC West",63
+"San Diego Chargers","StubHub Center","70,000","San Diego, CA","1,307,402","AFC West",63
+"Baltimore Ravens","M&T Bank Stadium","71,000","Baltimore, MD","620,961","AFC North",75
+"Cincinnati Bengals","Paul Brown Stadium","65,500","Cincinnati, OH","296,943","AFC North",75
+"Cleveland Browns","Cleveland Municipal Stadium","73,200","Cleveldand, OH","396,815","AFC North",75
+"Pittsburgh Steelers","Heinz Field","65,000","Pittsburgh, PA","305,704","AFC North",75
+"Houston Texans","Reliant Stadium","71,000","Houston, TX","2,099,451","AFC South",88
+"Indianapolis Colts","Lucas Oil Stadium","63,000","Indianapolis, IN","820,445","AFC South",88
+"Jacksonville Jaguars","EverBank Field","67,200","Jacksonville, FL","821,784","AFC South",88
+"Tennessee Titans","LP Stadium","69,100","Nashville, TN","601,222","AFC South",88
