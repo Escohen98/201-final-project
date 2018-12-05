@@ -396,6 +396,40 @@ server <- function(input, output) {
              yaxis = list(title = "Point Differential"))
   })
   
+  #Creates a Win Probability vs. Weather Conditions bar graph with the weather rank (1-4) on the x-axis and the win probability on the y-axis.
+  #There are 2 bars, 1 for each team, for each rank. The rank that corresponds to the current game will be color differently.
+  output$weather_chart <- renderPlotly({
+    teams <- home_and_away_teams()
+    probabilities <- weather_chart()
+    home_chart <- probabilities[2]
+    rank <- home_chart[home_chart$rankP == probabilities[1]$Weather_Win_Probibility[1], "ave_weather"] #Gets the rank from the data
+    rank_desc <- c("Warm", "Moderate", "Dome", "Cold")
+    probabilities[2]$ave_weather <- rank_desc
+    probabilities[3]$ave_weather <- rank_desc
+    home <- data.frame(c(probabilities[2]$ave_weather, probabilities[2]$rankP))
+    away <- data.frame(c(probabilities[3]$ave_weather, probabilities[3]$rankP))
+    names(home) <- c(print("Rank"), print("rankP_home"))
+    names(away) <- c(print("Rank"), print("rankP_away"))
+    rankPs <- full_join(home, away, by="rank")
+    
+    #Set Game Rank to Custom Color
+    home_color <- 'rgba(184, 184, 184, 1)'
+    home_special <- 'rgba(222, 45, 38, 0.8)'
+    home_marker <- c(home_color, home_color, home_color, home_color, home_color, home_color)
+    home_marker[rank] <- home_special
+    
+    away_color <- 'rgba(204, 204, 204, 1)'
+    away_special <- 'rgba(38, 45, 222, 0.8'
+    away_marker <- c(away_color, away_color, away_color, away_color, away_color, away_color)
+    away_marker[rank] <- away_special
+    #Some code below is taken from https://plot.ly/r/bar-charts/#customizing-individual-bar-colors
+    plot_ly(df, x = ~Rank, y = -rankP_home, type='bar', name='Home Team',
+            marker = list(color = home_marker)) %>%
+      add_trace(y = ~rankP_away, name='Away Team', marker = list(color = away_marker)) %>%
+      layout(title = "Win Probability vs. Weather Conditions",
+             yaxis = list(title='Win Probability'), barmode='group', 
+             legend = list(x = 0, y = 1, bgcolor = 'rgba(255, 255, 255, 0)', bordercolor = 'rgba(255, 255, 255, 0)'))
+  })
   
   ## Explaines the data used for each chart
   output$about <- renderText({
@@ -425,6 +459,7 @@ server <- function(input, output) {
     }
   })
   
+  
   ## Makes a chart comparing head-to-head results
   output$head_to_head_plot <- renderPlotly({
     teamNames <- home_and_away_teams()
@@ -439,40 +474,6 @@ server <- function(input, output) {
       layout(title = "Head-to-Head Matchup Record",
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-  })
-  
-  #Creates a Win Probability vs. Weather Conditions bar graph with the weather rank (1-4) on the x-axis and the win probability on the y-axis.
-  #There are 2 bars, 1 for each team, for each rank. The rank that corresponds to the current game will be color differently.
-  output$weather_chart_plot <- renderPlotly({
-    teams <- home_and_away_teams()
-    probabilities <- weather_chart()
-    home_chart <- probabilities[2]
-    rank <- home_chart[home_chart$rankP == probabilities[1]$Weather_Win_Probibility[1], "ave_weather"] #Gets the rank from the data
-    rank_desc <- c("Warm", "Moderate", "Dome", "Cold")
-    probabilities[2]$ave_weather <- rank_desc
-    probabilities[3]$ave_weather <- rank_desc
-    home <- data.frame(c(probabilities[2]$ave_weather, probabilities[2]$rankP))
-    away <- data.frame(c(probabilities[3]$ave_weather, probabilities[3]$rankP))
-    names(home) <- c(print("Rank"), print("rankP_home"))
-    names(away) <- c(print("Rank"), print("rankP_away"))
-    rankPs <- full_join(home, away, by="rank")
-    
-    #Set Game Rank to Custom Color
-    home_color <- 'rgba(184, 184, 184, 1)'
-    home_special <- 'rgba(222, 45, 38, 0.8)'
-    home_marker <- c(home_color, home_color, home_color, home_color, home_color, home_color)
-    home_marker[rank] <- home_special
-    
-    away_color <- 'rgba(204, 204, 204, 1)'
-    away_special <- 'rgba(38, 45, 222, 0.8'
-    away_marker <- c(away_color, away_color, away_color, away_color, away_color, away_color)
-    away_marker[rank] <- away_special
-    
-    plot_ly(df, x = ~Rank, y = -rankP_home, type='bar', name='Home Team',
-            marker = list(color = home_marker)) %>%
-      add_trace(y = ~rankP_away, name='Away Team', marker = list(color = away_marker)) %>%
-      layout(title = "Win Probability vs. Weather Conditions",
-             yaxis = list(title='Win Probability'), barmode='group')
   })
   
   ## Explains what team win rates tab means
