@@ -2,6 +2,8 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(plotly)
+library(aod)
+library(knitr)
 
 source("scripts/ml_predictions.r")
 
