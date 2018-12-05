@@ -10,14 +10,14 @@ library(dplyr)
 #otherwise returns both.
 #Switches home and away teams if stadium = 1 (home team). 
 get_team_data <- function(team, df, stadium="") {
-  team_data <- ""
+  team_data <- df
   if(nchar(team) != 3) {
     name_to_id(team)[1]
   }
-  if(stadium = 1) {
-    team_data <- filter(df, home_id == team) %>%
-      mutate(team_home = team_away, team_away = team_home, home_id = away_id, away_id = home_id, 
-             score_home = score_away, score_away = score_home)
+  if(stadium == 1) {
+      team_data <- mutate(team_data, team_home = df$team_away, team_away = df$team_home, home_id = df$away_id, away_id = df$home_id, 
+                          score_home = df$score_away, score_away = df$score_home) %>%
+        filter(home_id == team)
   } else if(stadium == 0) {
     team_data <- filter(df, away_id == team)
   } else {
