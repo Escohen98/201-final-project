@@ -61,7 +61,7 @@ shinyUI(fluidPage(
                          textOutput("point_differential_description")),
                 tabPanel("Head-to-Head", plotlyOutput("head_to_head_plot"),
                          textOutput("head_to_head_description")),
-                tabPanel("Weather", plotlyOutput("weather_chart")),
+                #tabPanel("Weather", plotlyOutput("weather_chart")),
                 tabPanel("About The Site", h4(textOutput("about")),
                          h5((textOutput("nine_game_mention"))))
     )
