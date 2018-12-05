@@ -54,9 +54,14 @@ stadium_to_rank <- function(team) {
   for(t in NFL$Team) {
     t <- shorten_name(t)
   }
-  team_name <- id_to_name(team)
+  #team_name <- id_to_name(team)[1]
   names(stadiums)[1] <- paste("Stadium")
   grouped <- right_join(stadiums, NFL, by="Stadium")
+  for(row in 1:nrow(grouped)) {
+    grouped$Team[row] <- shorten_name(grouped$Team[row])
+  }
+  print(grouped$Team)
+  print(team)
   temp <- grouped[grouped$Team == team, "stadium_weather_type"]
   if(temp == "cold") {
     temp <- 4
@@ -167,7 +172,7 @@ id_to_name <- function(id) {
 #Takes a team name and returns the given team id (not the team_id_pfr).
 #Make sure not to include the team's location (team_name) and only the name (team_name_short)
 name_to_id <- function(name) {
-  team <- select(get_teams, team_name_short, team_id) %>%
+  team <- select(get_teams(), team_name_short, team_id) %>%
     filter(as.character(team_name_short) == as.character(shorten_name(name)))
   team$team_id
 }
