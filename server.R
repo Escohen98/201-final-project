@@ -519,10 +519,10 @@ server <- function(input, output) {
   
   
   output$weather_problem <- renderText(({
-    paste("Through our study of the data, we concluded the impact of weather is extremely inconsistant.",
+    paste("**NOTE: Through our study of the data, we concluded the impact of weather is extremely inconsistant.",
           "Originally, we made weather impact one of the four prompts we wanted",
           "to have predict game outcome. However, due to the lack of consistancy the weather data brings,",
           "we changed the algorithm to incorperate point differential instead, as it turned out to be",
-          "a better gague of a team's recent performance than what weather would show us.")
+          "a better gague of a team's recent performance than what weather would show us**")
   }))
 }
