@@ -414,8 +414,10 @@ server <- function(input, output) {
   })
   
   output$winning_team <- renderText ({
-    if (who_wins_calculator() != "Based on our calculations, it's a tossup! Select tabs above for more information.") {
-      paste("Based on our calculations, it is projected that the", who_wins_calculator(), "will win. Select tabs above for more information.")
+    if (who_wins_calculator() !=
+        "Based on our data, it's a tossup! Select tabs above for more information.") {
+      paste("Based on our calculations, it is projected that the", who_wins_calculator(),
+            "will win. Select tabs above for more information.")
     } else {
       who_wins_calculator()
     }
