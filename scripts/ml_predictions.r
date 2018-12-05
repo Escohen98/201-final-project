@@ -1,27 +1,42 @@
-library(bootstrap)
-library(leaps)
-library(tidyverse)  # data manipulation
-library(cluster)    # clustering algorithms
-library(factoextra) # clustering algorithms & visualization
-library(GGally)
+#library(bootstrap)
+#library(leaps)
+#library(tidyverse)  # data manipulation
+#library(cluster)    # clustering algorithms
+#library(factoextra) # clustering algorithms & visualization
+#library(GGally)
+library(aod)
 library(ggplot2)
+library(knitr)
 
 source("Summary.r")
 #Train a linear regression prediction model on weather. 
 #Coming soon
-weather_effect_model <- function(team, info_data) {
-  df <- prepare_for_model(info_data)
-  attach(df)
-  leaps <- regsubsets(home_win ~ ave_weather, data=df, nbest=10)
-  summary(leaps)
+#weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
+#  df <- prepare_for_model(info_data)[1000,]
+#  attach(df)
+#  leaps <- regsubsets(factor(home_win) ~ weather_temperature + weather_wind_mph + weather_humidity, data=df, nbest=10, weights = weight, really.big=T)
+#  summary(leaps)
   #fit <- lm(leaps, data=get_team_data(team,info_data), nbest=10)
-  plot(leaps, scale="r2")
+#  plot(leaps, scale="r2")
   #library(car)
   #subsets(leaps, statistic="rsq")
+#}
+
+ 
+weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
+  df <- categorize_weather(prepare_for_model(info_data))[1:1000,]
+  #sapply(df, sd)
+  #val <- xtabs(~home_win + ave_weather, data=df)
+  df$ave_weather <- factor(df$ave_weather)
+  View(df$ave)
+  mylogit <- glm(home_win ~ weather_temperature + weather_wind_mph + weather_humidity, data=df, family="binomial")
+  summary(mylogit)
 }
 
+print(weather_effect_model("", spreadspoke))
+
 #weather_validator <- function()
-#weather_effect_model("DEN", spreadspoke)
+weather_effect_model("DEN", spreadspoke)
 
 #Graphs the model of home_win vs. weather. Dplyr is masked by GGally.
 ggpairs_model_checker <- function(info_data, weights=c(1,1,1)) {
