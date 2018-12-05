@@ -3,7 +3,7 @@ Final project of the best group in au18 info 201 Section A.
 
 Team: Lucas Tucker, Josh Manning, Eric Cohen, Daniel In
 
-Link to project: 
+[Link to project](https://lucasjtucker.shinyapps.io/201-final-project/)
 
 
 ## Images of proof of low correlation in weather algorithm
@@ -11,7 +11,7 @@ Link to project:
 "The code to generate the predicted probabilities (the first line below) is the same as before, 
 except we are also going to ask for standard errors so we can plot a confidence interval. 
 We get the estimates on the link scale and back transform both the predicted values and 
-confidence limits into probabilities." - https://stats.idre.ucla.edu/r/dae/logit-regression/
+confidence limits into probabilities." - [https://stats.idre.ucla.edu/r/dae/logit-regression/](https://stats.idre.ucla.edu/r/dae/logit-regression/)
 
 Key: 
 
