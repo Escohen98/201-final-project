@@ -239,7 +239,7 @@ get_scores <- function() {
 #Returns a dataframe containing information on which team plays at which stadium.
 #Also updates Chargers and Rams, and any other stadium that does not match with get_stadiums.
 get_NFL <- function() {
-  NFL <- read.csv(get_file_path("nfl.csv"), stringsAsFactors = FALSE)
+  NFL <- read.csv(get_file_path("NFL.csv"), stringsAsFactors = FALSE)
 }
 
 #Adds columns to CSV
