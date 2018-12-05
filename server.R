@@ -407,7 +407,6 @@ server <- function(input, output) {
     home_percent <- df$Weather_Win_Probibility[2]
     teams <- home_and_away_teams()
     rank <- stadium_to_rank(shorten_name(teams[2])) #Gets the rank from the data
-    print(rank)
     rank_desc <- c("Warm", "Moderate", "Dome", "Cold")
     home_chart$ave_weather <- rank_desc
     away_chart$ave_weather <- rank_desc
@@ -420,7 +419,6 @@ server <- function(input, output) {
     home_special <- 'rgba(222, 45, 38, 0.8)'
     home_marker <- c(home_color, home_color, home_color, home_color, home_color, home_color)
     
-    print(paste(rank, typeof(rank)))
     home_marker[as.numeric(rank)] <- home_special
     
     away_color <- 'rgba(204, 204, 204, 1)'

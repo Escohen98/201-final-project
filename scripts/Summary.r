@@ -60,7 +60,6 @@ stadium_to_rank <- function(team) {
     NFL$Team[row] <- shorten_name(NFL$Team[row])
   }
   field <- NFL[NFL$Team == team, "Stadium"]
-  print(field)
   temp <- filter(stadiums, Stadium == field)["weather"]
   if(temp == "cold") {
     temp <- 4
