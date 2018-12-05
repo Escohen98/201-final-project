@@ -48,8 +48,8 @@ shinyUI(fluidPage(
     h3("Data Collected from:", a("Here", href = 'https://www.kaggle.com/tobycrabtree/nfl-scores-and-betting-data')),
     tabsetPanel(type = "tabs",
                 tabPanel("Prediction", h3(textOutput("winning_team")), img("", src = "https://www.stmaryriverside.org/cms/lib/IL50000027/Centricity/Domain/80/JVfootball.png")),
-                tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart")),
-                tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart")),
+                tabPanel("Team Win Rates", plotlyOutput("home_versus_away_chart"), textOutput("win_rate_explanation")),
+                tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart"), textOutput("home_away_explanation")),
                 tabPanel("Point Differential", plotlyOutput("point_differential_chart")),
                 tabPanel("Head-to-Head", plotlyOutput("head_to_head_plot")),
                 tabPanel("About The Site", h4(textOutput("about")), h5((textOutput("nine_game_mention"))))

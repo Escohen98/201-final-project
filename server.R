@@ -437,4 +437,16 @@ server <- function(input, output) {
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   })
   
+  ## Explains what team win rates tab means
+  output$win_rate_explanation <- renderText({
+    paste("This is plot compares the win rates of two teams",
+          "i.e. win rates is games won over total games played")
+  })
+  
+  ## Explains what team win rates tab means
+  output$home_away_explanation <- renderText({
+    paste("This is plot compares the the home win rate of the home team", 
+          "and the away win rate of the away team")
+  })
+  
 }

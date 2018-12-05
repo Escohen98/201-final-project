@@ -282,4 +282,16 @@ server <- function(input, output) {
           "statistics presented are most representative of how the teams are",
           "currently performing **")
   })
+  
+  ## Explains what team win rates tab means
+  output$win_rate_explanation <- renderText({
+    paste("This is plot compares the win rates of two teams",
+          "i.e. win rates is games won over total games played")
+  })
+  
+  ## Explains what team win rates tab means
+  output$home_away_explanation <- renderText({
+    paste("This is plot compares the the home win rate of the home team", 
+          "and the away win rate of the away team")
+  })
 }
