@@ -365,7 +365,7 @@ server <- function(input, output) {
     point_differential <- point_differential()
     
     ## formatting title
-    chartTitle <- paste("Point differentials (points scored - points allowed) for the",
+    chartTitle <- paste("Point differentials for the",
                         point_differential[1, "Team_Name"], "and the",
                         point_differential[2, "Team_Name"])
     
@@ -376,10 +376,6 @@ server <- function(input, output) {
       layout(title = chartTitle,
              xaxis = list(title = "Team Name"),
              yaxis = list(title = "Point Differential"))
-    
-    # ggplot(data = point_differential,
-    #        aes(x = Team_Name, y = Point_Differential, fill = Team_Name)) +
-    #   geom_bar(stat = "identity") + labs(title = chartTitle) + theme(legend.position = "none")
   })
   
   
