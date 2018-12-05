@@ -3,6 +3,7 @@
 #based on weather data. 
 #The majority of the code was taken, implemented, and modified from 
 #https://stats.idre.ucla.edu/r/dae/logit-regression/
+#Created by Eric Cohen
 
 library(aod)
 library(ggplot2)
@@ -94,4 +95,22 @@ plot_data3 <- function(team, isHome, data) {
   ggplot(newdata3, aes(x = weather_wind_mph, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
                                       ymax = UL, fill = ave_weather), alpha = 0.2) + geom_line(aes(colour = ave_weather),
                                       size = 1)
+}
+
+#----------------------------------------------------------Debugging------------------------------------------------------------
+
+plot_data3("LAC", TRUE, get_scores())
+View(get_data1(weather_effect_model("LAC", TRUE, get_scores())))
+
+#Visualized data for weather_effect_model visualization
+#Important step in training model.
+#Function can help determine effectiveness of data.
+visualize <- function(mylogit) {
+  summary(mylogit)
+  sapple(df, sd)
+  print(xtabs(~away_win + ave_weather, data=df))
+  #Chi-Squared test (Step 3)
+  print(wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 5:7))
+  print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
+  with(mylogit, pchisq(null.deviance - deviance, df.null - df.residual, lower.tail = FALSE))
 }

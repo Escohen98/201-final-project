@@ -1,3 +1,8 @@
+#File consists of helper function to reduce redundancy throughout project. 
+#Similar to abstract class in Object-Oriented programming.
+#Primary implementation in ml_predictions.r
+#Created By Eric Cohen
+
 library(dplyr)
 
 #Gets and returns all rows with given team_name or team_id from data.
@@ -205,15 +210,6 @@ get_teams <- function() {
 get_scores <- function() {
   spreadspoke <- read.csv(get_file_path("spreadspoke_scores.csv"), stringsAsFactors = FALSE)
 } 
-
-#Returns a dataframe containing information on which team plays at which stadium.
-#Also updates Chargers and Rams stadiums
-get_NFL <- function() {
-  NFL <- read.csv(get_file_path("nfl.csv"), stringsAsFactors = FALSE)
-  NFL[8,2] <- "Los Angeles Memorial Colisium"
-  NFL[24,2] <- "StubHub Center"
-  NFL
-}
 
 #Adds columns to CSV
 #n^2. Only run once. 
