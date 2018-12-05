@@ -40,17 +40,26 @@ get_team_result <- function(df) {
   winner
 }
 
-#Given the stadium, computes rank of weather.
+#Given the home team id, computes rank of weather.
 #Key: 
 ## Rank | Stadium
 ##  1       dome
 ##  2       warm
 ##  3     moderate
 ##  4       cold
-stadium_to_rank <- function(home_stadium) {
+stadium_to_rank <- function(team) {
+  NFL <- get_NFL()
   stadiums <- select(get_stadiums(), stadium=stadium_name, 
-                               weather=stadium_weather_type)
-  temp <- stadiums[stadiums$stadium_name == home_stadium, "stadium_weather_type"]
+                     weather=stadium_weather_type)
+  #Safest bet. Most likely will not affect data.
+  #stadiums$stadium_weather_type[is.na(stadium$stadium_weather_type)] <- paste("dome") 
+  for(t in NFL$Team) {
+    t <- shorten_name(t)
+  }
+  team_name <- id_to_name(team)
+  names(stadiums)[1] <- paste("Stadium")
+  grouped <- right_join(stadiums, NFL, by="Stadium")
+  temp <- grouped[grouped$Team == team, "stadium_weather_type"]
   if(temp == "cold") {
     temp <- 4
   } else if(temp == "moderate") {
@@ -210,6 +219,15 @@ get_teams <- function() {
 get_scores <- function() {
   spreadspoke <- read.csv(get_file_path("spreadspoke_scores.csv"), stringsAsFactors = FALSE)
 } 
+
+#Returns a dataframe containing information on which team plays at which stadium.
+#Also updates Chargers and Rams stadiums
+get_NFL <- function() {
+  NFL <- read.csv(get_file_path("nfl.csv"), stringsAsFactors = FALSE)
+  NFL[8,2] <- "Los Angeles Memorial Colisium"
+  NFL[24,2] <- "StubHub Center"
+  NFL
+}
 
 #Adds columns to CSV
 #n^2. Only run once. 

@@ -104,7 +104,7 @@ test_code <- function() {
 plot_data3("LAC", FALSE, get_scores())
 View(get_data1(weather_effect_model("LAC", TRUE, get_scores())))
 }
-test_code()
+
 #Visualized data for weather_effect_model visualization
 #Important step in training model.
 #Function can help determine effectiveness of data.

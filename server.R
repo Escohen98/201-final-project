@@ -3,6 +3,8 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 
+source("ml_predictions.r")
+
 convert_importance <- function(string) {
   multiplyer <- 0
   if (string == "Not Very Important") {
@@ -276,6 +278,12 @@ server <- function(input, output) {
     
     data <- data_frame("Team_Names" = teamNames,
                        "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
+  })
+  
+  #Creates a chart and compares likelyhood of winning based on weather.
+  weather_chart <- reactive({
+    teams <- home_and_away_teams()
+    print(paste(teams[1], teams[2]))
   })
   
   #################    This calculates who is supposed to win the game   ##############
