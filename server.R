@@ -121,8 +121,8 @@ server <- function(input, output) {
     awayTeam <- temp[1]
     data <- filter(game_data, score_home != "NA",
                    schedule_week <= week | schedule_season < current_date,
-                   team_home == homeTeam | team_away == homeTeam,
-                   team_home == awayTeam | team_away == awayTeam)
+                   team_home == homeTeam | team_away == homeTeam)
+    data <- filter(data, team_home == awayTeam | team_away == awayTeam)
     data
   })
   
@@ -246,30 +246,33 @@ server <- function(input, output) {
     awayTeamWins <- 0
     
     ## counts how many head-to-head games each team won
-    for (i in 1:nrow(temp)) {
-      if (teamNames[2] == paste(temp[i, "team_home"])) {
-        if (temp[i, "score_home"] > temp[i, "score_away"]) {
-          homeTeamWins <- homeTeamWins + 1
-        } else if (temp[i, "score_home"] < temp[i, "score_away"]) {
-          awayTeamWins <- awayTeamWins + 1
+    if (nrow(temp) > 0) {
+      for (i in 1:nrow(temp)) {
+        if (teamNames[2] == paste(temp[i, "team_home"])) {
+          if (temp[i, "score_home"] > temp[i, "score_away"]) {
+            homeTeamWins <- homeTeamWins + 1
+          } else if (temp[i, "score_home"] < temp[i, "score_away"]) {
+            awayTeamWins <- awayTeamWins + 1
+          } else {
+            homeTeamWins <- homeTeamWins + 0.5
+            awayTeamWins <- awayTeamWins + 0.5
+          }
         } else {
-          homeTeamWins <- homeTeamWins + 0.5
-          awayTeamWins <- awayTeamWins + 0.5
+          if (temp[i, "score_home"] < temp[i, "score_away"]) {
+            homeTeamWins <- homeTeamWins + 1
+          } else if (temp[i, "score_home"] > temp[i, "score_away"]) {
+            awayTeamWins <- awayTeamWins + 1
+          } else {
+            homeTeamWins <- homeTeamWins + 0.5
+            awayTeamWins <- awayTeamWins + 0.5
+          }
         }
-      } else {
-        if (temp[i, "score_home"] < temp[i, "score_away"]) {
-          homeTeamWins <- homeTeamWins + 1
-        } else if (temp[i, "score_home"] > temp[i, "score_away"]) {
-          awayTeamWins <- awayTeamWins + 1
-        } else {
-          homeTeamWins <- homeTeamWins + 0.5
-          awayTeamWins <- awayTeamWins + 0.5
-        }
-      }
+      }    
+      homeTeamWins <- homeTeamWins / nrow(temp)
+      awayTeamWins <- awayTeamWins / nrow(temp)
     }
     
-    homeTeamWins <- homeTeamWins / nrow(temp)
-    awayTeamWins <- awayTeamWins / nrow(temp)
+
     
     data <- data_frame("Team_Names" = teamNames,
                        "Head_to_Head_Win_Rate" = c(awayTeamWins, homeTeamWins))
