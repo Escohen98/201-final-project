@@ -280,42 +280,44 @@ server <- function(input, output) {
     home_away_win_rate_chart <- home_away_win_rate_chart()
     win_rate_chart <- win_rate_chart()
     point_differential <- point_differential()
-    head_to_head <- head_to_head()
-    weather_chart <- weather_chart()
+    #head_to_head <- head_to_head()
+    #weather_chart <- weather_chart()
     home_team_score <- 0
     away_team_score <- 0
     if (win_rate_chart[2,2] > win_rate_chart[1,2]) {
-      home_team_score <- (home_team_score + convert_importance(input$win_rate_importance))
-    } else {
-      away_team_score <- (away_team_score + convert_importance(input$win_rate_importance))
+      home_team_score <- (home_team_score + convert_importance(paste(input$win_rate_importance)))
+    } else if (win_rate_chart[2,2] < win_rate_chart[1,2]){
+      away_team_score <- (away_team_score + convert_importance(paste(input$win_rate_importance)))
     }
     if (home_away_win_rate_chart[2,2] > home_away_win_rate_chart[1,2]) {
-      home_team_score <- (home_team_score + convert_importance(input$win_rate_home_away_importance))
-    } else {
-      away_team_score <- (away_team_score + convert_importance(input$win_rate_home_away_importance))
+      home_team_score <- (home_team_score + convert_importance(paste(input$win_rate_home_away_importance)))
+    } else if (home_away_win_rate_chart[2,2] < home_away_win_rate_chart[1,2]){
+      away_team_score <- (away_team_score + convert_importance(paste(input$win_rate_home_away_importance)))
     }
     if (point_differential[2,2] > point_differential[1,2]) {
-      home_team_score <- (home_team_score + convert_importance(input$point_differential_importance))
-    } else {
-      away_team_score <- (away_team_score + convert_importance(input$point_differential_importance))
+      home_team_score <- (home_team_score + convert_importance(paste(input$point_differential_importance)))
+    } else if (point_differential[2,2] < point_differential[1,2]){
+      away_team_score <- (away_team_score + convert_importance(paste(input$point_differential_importance)))
     }
-    if (head_to_head[2,2] > head_to_head[1,2]) {
-      home_team_score <- (home_team_score + convert_importance(input$head_to_head_importance))
-    } else {
-      away_team_score <- (away_team_score + convert_importance(input$head_to_head_importance))
-    }
-    if (weather_chart[2,2] > weather_chart[1,2]) {
-      home_team_score <- (home_team_score + convert_importance(input$weather_importance))
-    } else {
-      away_team_score <- (away_team_score + convert_importance(input$weather_importance))
-    }
+    #if (head_to_head[2,2] > head_to_head[1,2]) {
+    #  home_team_score <- (home_team_score + convert_importance(paste(input$head_to_head_importance)))
+    #} else if (head_to_head[2,2] < head_to_head[1,2]) {
+    #  away_team_score <- (away_team_score + convert_importance(paste(input$head_to_head_importance)))
+    #}
+    #if (weather_chart[2,2] > weather_chart[1,2]) {
+    #  home_team_score <- (home_team_score + convert_importance(paste(input$weather_importance)))
+    #} else if (weather_chart[2,2] < weather_chart[1,2]){
+    #  away_team_score <- (away_team_score + convert_importance(paste(input$weather_importance)))
+    #}
     this_team_wins <- ""
     if (home_team_score > away_team_score) {
-      this_team_wins <- win_rate_chart[2,1]
+      this_team_wins <- paste(win_rate_chart[2,1])
+    } else if (home_team_score < away_team_score) {
+      this_team_wins <- paste(win_rate_chart[1,1])
     } else {
-      this_team_wins <- win_rate_chart[1,1]
+      this_team_wins <- "Based on our data, it's a tossup! Select tabs above for more information."
     }
-    this_team_wins
+    return(this_team_wins)
   })
   
   ################# Outputs begin here   #########################
@@ -395,7 +397,11 @@ server <- function(input, output) {
   })
   
   output$winning_team <- renderText ({
-    h3(paste("Based on our calculations, it is projected that", who_wins_calculator(), "will win. Select tabs above for more information."))
+    if (who_wins_calculator() != "Based on our calculations, it's a tossup! Select tabs above for more information.") {
+      paste("Based on our calculations, it is projected that the", who_wins_calculator(), "will win. Select tabs above for more information.")
+    } else {
+      who_wins_calculator()
+    }
   })
   
 }
