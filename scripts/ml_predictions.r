@@ -14,7 +14,7 @@ source("Summary.r")
 #weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
 #  df <- prepare_for_model(info_data)[1000,]
 #  attach(df)
-#  leaps <- regsubsets(factor(home_win) ~ weather_temperature + weather_wind_mph + weather_humidity, data=df, nbest=10, weights = weight, really.big=T)
+#  leaps <- regsubsets(factor(away_win) ~ weather_temperature + weather_wind_mph + weather_humidity, data=df, nbest=10, weights = weight, really.big=T)
 #  summary(leaps)
   #fit <- lm(leaps, data=get_team_data(team,info_data), nbest=10)
 #  plot(leaps, scale="r2")
@@ -24,27 +24,31 @@ source("Summary.r")
 
  
 weather_effect_model <- function(team, info_data, weight=c(1,1,1)) {
-  df <- categorize_weather(prepare_for_model(info_data))[1:1000,]
-  #sapply(df, sd)
-  #val <- xtabs(~home_win + ave_weather, data=df)
+  df <- cheated_categorize_weather(prepare_for_model(info_data), 1000, 1)
+  head(df)
+  sapply(df, sd)
+  print(xtabs(~away_win + ave_weather, data=df))
   df$ave_weather <- factor(df$ave_weather)
-  View(df$ave)
-  mylogit <- glm(home_win ~ weather_temperature + weather_wind_mph + weather_humidity, data=df, family="binomial")
+  df$weather_humidity <- as.numeric(df$weather_humidity)
+  mylogit <- glm(away_win ~ weather_temperature + weather_wind_mph + weather_humidity + ave_weather, data=df, family="binomial")
   summary(mylogit)
+  #Chi-Squared test
+  print(wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 5:7))
+  print(exp(cbind(OR = coef(mylogit), confint(mylogit))))
 }
 
-print(weather_effect_model("", spreadspoke))
+weather_effect_model("", spreadspoke)
 
 #weather_validator <- function()
 weather_effect_model("DEN", spreadspoke)
 
-#Graphs the model of home_win vs. weather. Dplyr is masked by GGally.
+#Graphs the model of away_win vs. weather. Dplyr is masked by GGally.
 ggpairs_model_checker <- function(info_data, weights=c(1,1,1)) {
   
   #View(df)
   #df <- fortify(c(((info_data$score_home-info_data$score_away)/abs(info_data$score_home-info_data$score_away)), (info_data$weather_temperature + info_data$weather_wind_mph + as.numeric(info_data$weather_humidity))/3))
   #df <- as.data.frame(df)
-  ggpairs(data=df, upper=list(df$home_win), lower=list(df$ave_weather, df$weather_temperature*weights[1], df$weather_wind_mph*weights[2], as.numeric(df$weather_humidity)*weights[3]), title="Home Win vs. Weather", cardinality_threshold = 100)
+  ggpairs(data=df, upper=list(df$away_win), lower=list(df$ave_weather, df$weather_temperature*weights[1], df$weather_wind_mph*weights[2], as.numeric(df$weather_humidity)*weights[3]), title="Home Win vs. Weather", cardinality_threshold = 100)
 }
 
 # ggpairs_model_checker(spreadspoke, c(3, 2, 0.5))
