@@ -431,7 +431,7 @@ server <- function(input, output) {
       add_trace(y = ~rankP_away, name=teams[1], marker = list(color = away_marker)) %>%
       layout(title = "Win Probability vs. Weather Conditions",
              yaxis = list(title='Win Probability'), barmode='group', 
-             legend = list(x = 0, y = 1, bgcolor = 'rgba(255, 255, 255, 0)', bordercolor = 'rgba(255, 255, 255, 0)'))
+             legend = list(x = 1, y = 1, bgcolor = 'rgba(255, 255, 255, 0)', bordercolor = 'rgba(255, 255, 255, 0)'))
   })
   
   ## Explaines the data used for each chart
