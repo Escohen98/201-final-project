@@ -384,7 +384,14 @@ server <- function(input, output) {
   
   
   ## Explaines the data used for each chart
-  output$nine_game_mention <- renderText({
+  output$about <- renderText({
+    paste("This site analyzes NFL statistics to determine which games are “safe”",
+          "to bet on. Using NFL data from 1966-2018",
+          "that contains information on football games, such as where the game was played,",
+          "the weather during the game, and the game’s outcome, the predictor",
+          "can assist sports gamblers from the fantasy league to the casual fan.")
+  })
+    output$nine_game_mention <- renderText({
     paste("** NOTE: All data used is over the nine pertinant games prior to",
           "the game being predicted (ex: the chart comparing records looks at the",
           "teams' last nine games, while the chart comparing the home team's",

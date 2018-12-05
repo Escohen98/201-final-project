@@ -52,7 +52,7 @@ shinyUI(fluidPage(
                 tabPanel("Rates: Home vs Away", plotlyOutput("home_and_away_chart")),
                 tabPanel("Point Differential", plotlyOutput("point_differential_chart")),
                 tabPanel("Head-to-Head", plotlyOutput("head_to_head_plot")),
-                tabPanel("About The Site", textOutput("nine_game_mention"))
+                tabPanel("About The Site", h4(textOutput("about")), h5((textOutput("nine_game_mention"))))
     )
   )
   )
