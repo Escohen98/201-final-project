@@ -7,7 +7,7 @@ if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) {
   file_path <- paste0('../', file_path)
 }
 teams <- read.csv(file_path, stringsAsFactors = FALSE)
-spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
+#spreadspoke <- read.csv("../data/spreadspoke_scores.csv", stringsAsFactors = FALSE)
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {

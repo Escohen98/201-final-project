@@ -32,7 +32,7 @@ ggpairs_model_checker <- function(info_data, weights=c(1,1,1)) {
   ggpairs(data=df, upper=list(df$home_win), lower=list(df$ave_weather, df$weather_temperature*weights[1], df$weather_wind_mph*weights[2], as.numeric(df$weather_humidity)*weights[3]), title="Home Win vs. Weather", cardinality_threshold = 100)
 }
 
-#ggpairs_model_checker(spreadspoke, c(3, 2, 0.5))
+# ggpairs_model_checker(spreadspoke, c(3, 2, 0.5))
 
 individual_model_checker <- function(info_data) {
   df <- prepare_for_model(info_data)
