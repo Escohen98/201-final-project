@@ -41,10 +41,10 @@ get_team_result <- function(df) {
 #Given the home team id, computes rank of weather.
 #Key: 
 ## Rank | Stadium
-##  1       dome
-##  2       warm
-##  3     moderate
-##  4       cold
+##  1   |   warm
+##  2   | moderate
+##  3   |   dome
+##  4   |   cold
 stadium_to_rank <- function(team) {
   NFL <- get_NFL()
   stadiums <- select(get_stadiums(), stadium=stadium_name, 
@@ -61,11 +61,11 @@ stadium_to_rank <- function(team) {
   if(temp == "cold") {
     temp <- 4
   } else if(temp == "moderate") {
-    temp <- 3
-  } else if(temp == "warm") {
     temp <- 2
-  } else {
+  } else if(temp == "warm") {
     temp <- 1
+  } else {
+    temp <- 3
   }
   
   temp

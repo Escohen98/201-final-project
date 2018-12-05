@@ -281,7 +281,8 @@ server <- function(input, output) {
   })
   
   #Uses ML algorithm to determine the win probability of each team based on the climate. 
-  #Returns a dataframe containing the probabilities of each team.
+  #Returns a list containing a dataframe containing the probabilities of each team and 
+  #the ML algorithm output for each team.
   weather_chart <- reactive({
     teams <- home_and_away_teams()
     home_team <- get_data1(weather_effect_model(teams[1], TRUE, get_scores()))
@@ -292,7 +293,7 @@ server <- function(input, output) {
     
     df <- data_frame("Team_Names" = teams, 
                      "Weather_Win_Probability" = c(home_win_prob, away_win_prob))
-    
+    all <- list(df, home_team, away_team)
   })
   
   #################    This calculates who is supposed to win the game   ##############
@@ -301,7 +302,7 @@ server <- function(input, output) {
     win_rate_chart <- win_rate_chart()
     point_differential <- point_differential()
     head_to_head <- head_to_head()
-    #weather_chart <- weather_chart()
+    weather_chart <- weather_chart()[[1]]
     home_team_score <- 0
     away_team_score <- 0
     if (win_rate_chart[2,2] > win_rate_chart[1,2]) {
@@ -427,36 +428,65 @@ server <- function(input, output) {
   ## Makes a chart comparing head-to-head results
   output$head_to_head_plot <- renderPlotly({
     teamNames <- home_and_away_teams()
-    df <- head_to_head()
-    
-    if (df[1, 2] == df[2, 2]) {
-      df[1, 2] <- .5
-      df[2, 2] <- .5
-    }
-    
+    df <- weather_chart()
+    rank <- weather_chart()[1]
     plot_ly(df, labels = ~Team_Names, values = ~Head_to_Head_Win_Rate, type = "pie") %>% 
       layout(title = "Head-to-Head Matchup Record",
              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
   })
   
+  #Creates a Win Probability vs. Weather Conditions bar graph with the weather rank (1-4) on the x-axis and the win probability on the y-axis.
+  #There are 2 bars, 1 for each team, for each rank. The rank that corresponds to the current game will be color differently.
+  output$weather_chart_plot <- renderPlotly({
+    teams <- home_and_away_teams()
+    probabilities <- weather_chart()
+    home_chart <- probabilities[2]
+    rank <- home_chart[home_chart$rankP == probabilities[1]$Weather_Win_Probibility[1], "ave_weather"] #Gets the rank from the data
+    rank_desc <- c("Warm", "Moderate", "Dome", "Cold")
+    probabilities[2]$ave_weather <- rank_desc
+    probabilities[3]$ave_weather <- rank_desc
+    home <- data.frame(c(probabilities[2]$ave_weather, probabilities[2]$rankP))
+    away <- data.frame(c(probabilities[3]$ave_weather, probabilities[3]$rankP))
+    names(home) <- c(print("Rank"), print("rankP_home"))
+    names(away) <- c(print("Rank"), print("rankP_away"))
+    rankPs <- full_join(home, away, by="rank")
+    
+    #Set Game Rank to Custom Color
+    home_color <- 'rgba(184, 184, 184, 1)'
+    home_special <- 'rgba(222, 45, 38, 0.8)'
+    home_marker <- c(home_color, home_color, home_color, home_color, home_color, home_color)
+    home_marker[rank] <- home_special
+    
+    away_color <- 'rgba(204, 204, 204, 1)'
+    away_special <- 'rgba(38, 45, 222, 0.8'
+    away_marker <- c(away_color, away_color, away_color, away_color, away_color, away_color)
+    away_marker[rank] <- away_special
+    
+    plot_ly(df, x = ~Rank, y = -rankP_home, type='bar', name='Home Team',
+            marker = list(color = home_marker)) %>%
+      add_trace(y = ~rankP_away, name='Away Team', marker = list(color = away_marker)) %>%
+      layout(title = "Win Probability vs. Weather Conditions",
+             yaxis = list(title='Win Probability'), barmode='group')
+  })
+  
   ## Explains what team win rates tab means
   output$win_rate_explanation <- renderText({
     paste("This plot compares the win rates of two teams",
-          "i.e. win rates is games won over total games played")
+          "i.e. win rates is games won over total games played.")
   })
   
   ## Explains what team win rates tab means
   output$home_away_explanation <- renderText({
     paste("This plot compares the the home win rate of the home team", 
-          "and the away win rate of the away team")
+          "and the away win rate of the away team.")
   })
   
   ## Describes the head-to-head chart
   output$head_to_head_description <- renderText({
     paste("This plot compares the win rate of the two teams in head-to-head",
           "matches (i.e. games where they played each other)",
-          "over the last three years")
+          "over the last three years.")
   })
   
   
@@ -464,8 +494,18 @@ server <- function(input, output) {
   output$point_differential_description <- renderText({
     paste("This plot compares the point differentials of the two teams.",
           "Point differential is the total points scored by a team subtracted by",
-          "the total points they have allowed their opponents to score")
+          "the total points they have allowed their opponents to score.")
   })
   
+  ##Describes the weather win probability chart
+  output$weather_chart_description <- renderText({
+    paste("This plot compares Win Probability between each team and the Weather Conditions.",
+          "The weather ranks are classify the intensity of weather in the stadium.",
+          "Warm is the highest intensity while Cold is the lowest.",
+          "Each rank has one graph for the home team's win probabiltiy and another for the away team's.",
+          "The rank that is colored differently than the rest is the temperature-grade for the selected game.",
+          "The higher of the home and away bars for each rank would specify who would be more likely to win",
+          "based on the weather.")
+  })
   
 }
