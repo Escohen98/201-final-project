@@ -146,7 +146,7 @@ weather_chart <- reactive({
 
 ## Creates chart of win rates based on Weather
 output$weather_chart <- renderPlotly ({
-  home_team_weather <- away_team_weather()
+  home_team_weather <- home_team_weather()
   away_team_weather <- away_team_weather()
   teamNames <- home_and_away_teams()
   homeTeam <- teamNames[2]
