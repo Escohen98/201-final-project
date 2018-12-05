@@ -1,19 +1,20 @@
 library(dplyr)
 
 ##Enables scripts to run in either main dir or scripts folder.
-file_path <- "data/nfl_teams.csv"
+file_path <- "data/"
 if(substr(getwd(),nchar(getwd())-6, nchar(getwd())) == "scripts" ) { 
   file_path <- paste0('../', file_path)
 }
-stadiums <- read.csv(file_path, stringsAsFactors = FALSE)
-teams <- read.csv(file_path, stringsAsFactors = FALSE)
+stadiums <- read.csv(paste0(file_path,"nfl_stadiums.csv"), stringsAsFactors = FALSE)
+teams <- read.csv(paste0(file_path,"nfl_teams.csv"), stringsAsFactors = FALSE)
+NFL <- read.csv(paste0(file_path,"nfl.csv"), stringsAsFactors = FALSE)
 #spreadspoke <- read.csv(file_path, stringsAsFactors = FALSE)
 
 #Gets and returns all rows with given team_name or team_id from data. 
 get_team_data <- function(team, data) {
   team_data <- ""
   if(nchar(team) != 3) {
-    name_to_id(team)
+    name_to_id(team)[1]
   }
   team_data <- filter(data, (home_id == team) | (away_id == team))
   team_data
@@ -25,9 +26,9 @@ get_team_data <- function(team, data) {
 get_team_result <- function(data) {
   winner <- ""
   if(data$score_away > data$score_home) {
-    winner <- name_to_id(data$team_away)
+    winner <- name_to_id(data$team_away)[1]
   } else {
-    winner <- name_to_id(data$team_home)
+    winner <- name_to_id(data$team_home)[1]
   }
   
   winner
@@ -70,13 +71,13 @@ append_ids <- function(data) {
     if(is.na(data[row,]$team_home)) {
       home_ids <- c(home_ids, data[row,]$team_home)
     } else {
-      home_ids <- c(home_ids, name_to_id(data[row,]$team_home))
+      home_ids <- c(home_ids, name_to_id(data[row,]$team_home)[1])
     }
     
     if(is.na(data[row,]$team_away)) {
       away_ids <- c(away_ids, data[row,]$team_away)
     } else {
-      away_ids <- c(away_ids, name_to_id(data[row,]$team_away))
+      away_ids <- c(away_ids, name_to_id(data[row,]$team_away)[1])
     }
   }
   something <- mutate(data, home_id = home_ids, away_id = away_ids)
@@ -101,7 +102,7 @@ id_to_name <- function(id) {
 name_to_id <- function(name) {
   team <- select(teams, team_name_short, team_id) %>%
     filter(as.character(team_name_short) == as.character(shorten_name(name)))
-  team$team_id[1]
+  team$team_id
 }
 
 #Returns the number of wins a team has in the given year up until the given week. Returns a numeric result.

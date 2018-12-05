@@ -1,9 +1,9 @@
-#library(bootstrap)
-#library(leaps)
-#library(tidyverse)  # data manipulation
-#library(cluster)    # clustering algorithms
-#library(factoextra) # clustering algorithms & visualization
-#library(GGally)
+#All methods in this file are used to train, validate, test, and visualize 
+#a Logistical Regression Machine Learning Model to determine NFL game outcomes 
+#based on weather data. 
+#The majority of the code was taken, implemented, and modified from 
+#https://stats.idre.ucla.edu/r/dae/logit-regression/
+
 library(aod)
 library(ggplot2)
 library(knitr)
