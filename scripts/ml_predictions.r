@@ -9,7 +9,7 @@ library(aod)
 library(ggplot2)
 library(knitr)
 
-source("Summary.r")
+source("scripts/Summary.r")
 
 #Machine Learning Algorithm to train and learn the model. Model has been tested prior to current. 
 #Supplied data is entire sample of played NFL games since 1966  

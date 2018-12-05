@@ -3,7 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 
-source("ml_predictions.r")
+source("scripts/ml_predictions.r")
 
 convert_importance <- function(string) {
   multiplyer <- 0
