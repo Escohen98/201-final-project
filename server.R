@@ -229,7 +229,36 @@ server <- function(input, output) {
   who_wins_calculator <- reactive({
     home_away_win_rate_chart <- home_away_win_rate_chart()
     win_rate_chart <- win_rate_chart()
-    home_and
+    point_differential <- point_differential()
+    head_to_head <- head_to_head()
+    weather_chart <- weather_chart()
+    home_team_score <- 0
+    away_team_score <- 0
+    if (win_rate_chart[2,2] > win_rate_chart[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(input$win_rate_importance))
+    } else {
+      away_team_score <- (away_team_score + convert_importance(input$win_rate_importance))
+    }
+    if (home_away_win_rate_chart[2,2] > home_away_win_rate_chart[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(input$win_rate_home_away_importance))
+    } else {
+      away_team_score <- (away_team_score + convert_importance(input$win_rate_home_away_importance))
+    }
+    if (point_differential[2,2] > point_differential[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(input$point_differential_importance))
+    } else {
+      away_team_score <- (away_team_score + convert_importance(input$point_differential_importance))
+    }
+    if (head_to_head[2,2] > head_to_head[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(input$head_to_head_importance))
+    } else {
+      away_team_score <- (away_team_score + convert_importance(input$head_to_head_importance))
+    }
+    if (weather_chart[2,2] > weather_chart[1,2]) {
+      home_team_score <- (home_team_score + convert_importance(input$weather_importance))
+    } else {
+      away_team_score <- (away_team_score + convert_importance(input$weather_importance))
+    }
   })
   
   ################# Outputs begin here   #########################
