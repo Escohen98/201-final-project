@@ -1,6 +1,9 @@
 library(shiny)
 library(dplyr)
 library(plotly)
+library(aod)
+library(ggplot2)
+library(knitr)
 
 current_date <- strtoi(substr(date(), nchar(date()) - 3, nchar(date())))
 buttons <- c("Not Very Important", "Fairly Important", "Very Important")
